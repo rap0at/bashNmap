@@ -1,0 +1,173 @@
+# Nmap 7.91 scan initiated Sat Sep  3 20:31:32 2022 as: nmap --script vuln -A -sV -sT -O -p- --oN vuln.txt 172.217.161.206
+Pre-scan script results:
+| broadcast-avahi-dos: 
+|   Discovered hosts:
+|     224.0.0.251
+|   After NULL UDP avahi packet DoS (CVE-2011-1002).
+|_  Hosts are all up (not vulnerable).
+Nmap scan report for kix07s03-in-f14.1e100.net (172.217.161.206)
+Host is up (0.028s latency).
+Not shown: 65533 filtered ports
+PORT    STATE SERVICE   VERSION
+80/tcp  open  http      gws
+| fingerprint-strings: 
+|   GetRequest: 
+|     HTTP/1.0 200 OK
+|     Date: Sun, 04 Sep 2022 06:35:06 GMT
+|     Expires: -1
+|     Cache-Control: private, max-age=0
+|     Content-Type: text/html; charset=ISO-8859-1
+|     P3P: CP="This is not a P3P policy! See g.co/p3phelp for more info."
+|     Server: gws
+|     X-XSS-Protection: 0
+|     X-Frame-Options: SAMEORIGIN
+|     Set-Cookie: 1P_JAR=2022-09-04-06; expires=Tue, 04-Oct-2022 06:35:06 GMT; path=/; domain=.google.com; Secure
+|     Set-Cookie: AEC=AakniGMlACFAbZYYKcKWYC8Jx9uzBMAvEPEuvkAmH5HPH8Bmr0ZnKXBxQA; expires=Fri, 03-Mar-2023 06:35:06 GMT; path=/; domain=.google.com; Secure; HttpOnly; SameSite=lax
+|     Set-Cookie: NID=511=DIzti-oFL1S8QQ3l0diy1zI-P-TWaq1V0_cyJGLHJZiVCQ2TRzj47KYiA2GHh7Zui4Wqi643C4B4ckjIrlvCiMdjQn2W84UdeMrIs-nXBbNyTofoMY-ktNnSPMwlW8qS_xG1DN1uTF4E3DbuocY3gTwx8PpyuUZuIE7w8C_C3GE; expires=Mon, 06-Mar-2023 06:35:06 GMT; path=/; domain=.google.com; HttpOnly
+|     Accept-Ranges: none
+|     Vary: Accept-Encoding
+|     <!doctype html><html
+|   HTTPOptions: 
+|     HTTP/1.0 405 Method Not Allowed
+|     Allow: GET, HEAD
+|     Date: Sun, 04 Sep 2022 06:35:06 GMT
+|     Content-Type: text/html; charset=UTF-8
+|     Server: gws
+|     Content-Length: 1592
+|     X-XSS-Protection: 0
+|     X-Frame-Options: SAMEORIGIN
+|     <!DOCTYPE html>
+|     <html lang=en>
+|     <meta charset=utf-8>
+|     <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+|     <title>Error 405 (Method Not Allowed)!!1</title>
+|     <style>
+|_    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#l
+|_http-csrf: Couldn't find any CSRF vulnerabilities.
+|_http-dombased-xss: Couldn't find any DOM based XSS.
+|_http-server-header: gws
+|_http-stored-xss: Couldn't find any stored XSS vulnerabilities.
+|_http-vuln-cve2014-3704: ERROR: Script execution failed (use -d to debug)
+443/tcp open  ssl/https gws
+| fingerprint-strings: 
+|   GetRequest: 
+|     HTTP/1.0 200 OK
+|     Date: Sun, 04 Sep 2022 06:35:12 GMT
+|     Expires: -1
+|     Cache-Control: private, max-age=0
+|     Content-Type: text/html; charset=ISO-8859-1
+|     P3P: CP="This is not a P3P policy! See g.co/p3phelp for more info."
+|     Server: gws
+|     X-XSS-Protection: 0
+|     X-Frame-Options: SAMEORIGIN
+|     Set-Cookie: 1P_JAR=2022-09-04-06; expires=Tue, 04-Oct-2022 06:35:12 GMT; path=/; domain=.google.com; Secure
+|     Set-Cookie: AEC=AakniGNga3R5Jr9xvr7itAjoVdAfBtiBL8MD7CBTzVuV3V3jOhO_w62weA; expires=Fri, 03-Mar-2023 06:35:12 GMT; path=/; domain=.google.com; Secure; HttpOnly; SameSite=lax
+|     Set-Cookie: NID=511=fsMZHZvJXbpULbz9BlHxEuMF9oSf4slYXekQly-C-MMaWssogwtmn52f7ok8K8DltpioswVXbOoO5E_-pNFmnhtVWihlF6sXVUqgsFxobmnFW3cLXeGq7fg4vznlhOvnXAPEME7DBph06YCsTZJBcmVMqK0TLXJnlzljdKTkUWs; expires=Mon, 06-Mar-2023 06:35:12 GMT; path=/; domain=.google.com; HttpOnly
+|     Alt-Svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000,h3-Q050=":4
+|   HTTPOptions: 
+|     HTTP/1.0 405 Method Not Allowed
+|     Allow: GET, HEAD
+|     Date: Sun, 04 Sep 2022 06:35:12 GMT
+|     Content-Type: text/html; charset=UTF-8
+|     Server: gws
+|     Content-Length: 1592
+|     X-XSS-Protection: 0
+|     X-Frame-Options: SAMEORIGIN
+|     Alt-Svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000,h3-Q050=":443"; ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000,quic=":443"; ma=2592000; v="46,43"
+|     <!DOCTYPE html>
+|     <html lang=en>
+|     <meta charset=utf-8>
+|     <meta name=viewport content="initial-scale=1, minimum-scale=1, width=device-width">
+|     <title>Error 405 (Method Not Allowed)!!1</title>
+|     <style>
+|_    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22p
+|_http-csrf: Couldn't find any CSRF vulnerabilities.
+|_http-dombased-xss: Couldn't find any DOM based XSS.
+|_http-server-header: gws
+|_http-stored-xss: Couldn't find any stored XSS vulnerabilities.
+|_sslv2-drown: 
+2 services unrecognized despite returning data. If you know the service/version, please submit the following fingerprints at https://nmap.org/cgi-bin/submit.cgi?new-service :
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port80-TCP:V=7.91%I=7%D=9/4%Time=63144226%P=x86_64-pc-linux-gnu%r(GetRe
+SF:quest,37DC,"HTTP/1\.0\x20200\x20OK\r\nDate:\x20Sun,\x2004\x20Sep\x20202
+SF:2\x2006:35:06\x20GMT\r\nExpires:\x20-1\r\nCache-Control:\x20private,\x2
+SF:0max-age=0\r\nContent-Type:\x20text/html;\x20charset=ISO-8859-1\r\nP3P:
+SF:\x20CP=\"This\x20is\x20not\x20a\x20P3P\x20policy!\x20See\x20g\.co/p3phe
+SF:lp\x20for\x20more\x20info\.\"\r\nServer:\x20gws\r\nX-XSS-Protection:\x2
+SF:00\r\nX-Frame-Options:\x20SAMEORIGIN\r\nSet-Cookie:\x201P_JAR=2022-09-0
+SF:4-06;\x20expires=Tue,\x2004-Oct-2022\x2006:35:06\x20GMT;\x20path=/;\x20
+SF:domain=\.google\.com;\x20Secure\r\nSet-Cookie:\x20AEC=AakniGMlACFAbZYYK
+SF:cKWYC8Jx9uzBMAvEPEuvkAmH5HPH8Bmr0ZnKXBxQA;\x20expires=Fri,\x2003-Mar-20
+SF:23\x2006:35:06\x20GMT;\x20path=/;\x20domain=\.google\.com;\x20Secure;\x
+SF:20HttpOnly;\x20SameSite=lax\r\nSet-Cookie:\x20NID=511=DIzti-oFL1S8QQ3l0
+SF:diy1zI-P-TWaq1V0_cyJGLHJZiVCQ2TRzj47KYiA2GHh7Zui4Wqi643C4B4ckjIrlvCiMdj
+SF:Qn2W84UdeMrIs-nXBbNyTofoMY-ktNnSPMwlW8qS_xG1DN1uTF4E3DbuocY3gTwx8PpyuUZ
+SF:uIE7w8C_C3GE;\x20expires=Mon,\x2006-Mar-2023\x2006:35:06\x20GMT;\x20pat
+SF:h=/;\x20domain=\.google\.com;\x20HttpOnly\r\nAccept-Ranges:\x20none\r\n
+SF:Vary:\x20Accept-Encoding\r\n\r\n<!doctype\x20html><html\x20")%r(HTTPOpt
+SF:ions,70F,"HTTP/1\.0\x20405\x20Method\x20Not\x20Allowed\r\nAllow:\x20GET
+SF:,\x20HEAD\r\nDate:\x20Sun,\x2004\x20Sep\x202022\x2006:35:06\x20GMT\r\nC
+SF:ontent-Type:\x20text/html;\x20charset=UTF-8\r\nServer:\x20gws\r\nConten
+SF:t-Length:\x201592\r\nX-XSS-Protection:\x200\r\nX-Frame-Options:\x20SAME
+SF:ORIGIN\r\n\r\n<!DOCTYPE\x20html>\n<html\x20lang=en>\n\x20\x20<meta\x20c
+SF:harset=utf-8>\n\x20\x20<meta\x20name=viewport\x20content=\"initial-scal
+SF:e=1,\x20minimum-scale=1,\x20width=device-width\">\n\x20\x20<title>Error
+SF:\x20405\x20\(Method\x20Not\x20Allowed\)!!1</title>\n\x20\x20<style>\n\x
+SF:20\x20\x20\x20\*{margin:0;padding:0}html,code{font:15px/22px\x20arial,s
+SF:ans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7%\x
+SF:20auto\x200;max-width:390px;min-height:180px;padding:30px\x200\x2015px}
+SF:\*\x20>\x20body{background:url\(//www\.google\.com/images/errors/robot\
+SF:.png\)\x20100%\x205px\x20no-repeat;padding-right:205px}p{margin:11px\x2
+SF:00\x2022px;overflow:hidden}ins{color:#777;text-decoration:none}a\x20img
+SF:{border:0}@media\x20screen\x20and\x20\(max-width:772px\){body{backgroun
+SF:d:none;margin-top:0;max-width:none;padding-right:0}}#l");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port443-TCP:V=7.91%T=SSL%I=7%D=9/4%Time=6314422C%P=x86_64-pc-linux-gnu%
+SF:r(GetRequest,3700,"HTTP/1\.0\x20200\x20OK\r\nDate:\x20Sun,\x2004\x20Sep
+SF:\x202022\x2006:35:12\x20GMT\r\nExpires:\x20-1\r\nCache-Control:\x20priv
+SF:ate,\x20max-age=0\r\nContent-Type:\x20text/html;\x20charset=ISO-8859-1\
+SF:r\nP3P:\x20CP=\"This\x20is\x20not\x20a\x20P3P\x20policy!\x20See\x20g\.c
+SF:o/p3phelp\x20for\x20more\x20info\.\"\r\nServer:\x20gws\r\nX-XSS-Protect
+SF:ion:\x200\r\nX-Frame-Options:\x20SAMEORIGIN\r\nSet-Cookie:\x201P_JAR=20
+SF:22-09-04-06;\x20expires=Tue,\x2004-Oct-2022\x2006:35:12\x20GMT;\x20path
+SF:=/;\x20domain=\.google\.com;\x20Secure\r\nSet-Cookie:\x20AEC=AakniGNga3
+SF:R5Jr9xvr7itAjoVdAfBtiBL8MD7CBTzVuV3V3jOhO_w62weA;\x20expires=Fri,\x2003
+SF:-Mar-2023\x2006:35:12\x20GMT;\x20path=/;\x20domain=\.google\.com;\x20Se
+SF:cure;\x20HttpOnly;\x20SameSite=lax\r\nSet-Cookie:\x20NID=511=fsMZHZvJXb
+SF:pULbz9BlHxEuMF9oSf4slYXekQly-C-MMaWssogwtmn52f7ok8K8DltpioswVXbOoO5E_-p
+SF:NFmnhtVWihlF6sXVUqgsFxobmnFW3cLXeGq7fg4vznlhOvnXAPEME7DBph06YCsTZJBcmVM
+SF:qK0TLXJnlzljdKTkUWs;\x20expires=Mon,\x2006-Mar-2023\x2006:35:12\x20GMT;
+SF:\x20path=/;\x20domain=\.google\.com;\x20HttpOnly\r\nAlt-Svc:\x20h3=\":4
+SF:43\";\x20ma=2592000,h3-29=\":443\";\x20ma=2592000,h3-Q050=\":4")%r(HTTP
+SF:Options,7BC,"HTTP/1\.0\x20405\x20Method\x20Not\x20Allowed\r\nAllow:\x20
+SF:GET,\x20HEAD\r\nDate:\x20Sun,\x2004\x20Sep\x202022\x2006:35:12\x20GMT\r
+SF:\nContent-Type:\x20text/html;\x20charset=UTF-8\r\nServer:\x20gws\r\nCon
+SF:tent-Length:\x201592\r\nX-XSS-Protection:\x200\r\nX-Frame-Options:\x20S
+SF:AMEORIGIN\r\nAlt-Svc:\x20h3=\":443\";\x20ma=2592000,h3-29=\":443\";\x20
+SF:ma=2592000,h3-Q050=\":443\";\x20ma=2592000,h3-Q046=\":443\";\x20ma=2592
+SF:000,h3-Q043=\":443\";\x20ma=2592000,quic=\":443\";\x20ma=2592000;\x20v=
+SF:\"46,43\"\r\n\r\n<!DOCTYPE\x20html>\n<html\x20lang=en>\n\x20\x20<meta\x
+SF:20charset=utf-8>\n\x20\x20<meta\x20name=viewport\x20content=\"initial-s
+SF:cale=1,\x20minimum-scale=1,\x20width=device-width\">\n\x20\x20<title>Er
+SF:ror\x20405\x20\(Method\x20Not\x20Allowed\)!!1</title>\n\x20\x20<style>\
+SF:n\x20\x20\x20\x20\*{margin:0;padding:0}html,code{font:15px/22px\x20aria
+SF:l,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7
+SF:%\x20auto\x200;max-width:390px;min-height:180px;padding:30px\x200\x2015
+SF:px}\*\x20>\x20body{background:url\(//www\.google\.com/images/errors/rob
+SF:ot\.png\)\x20100%\x205px\x20no-repeat;padding-right:205px}p{margin:11px
+SF:\x200\x2022p");
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Device type: WAP|general purpose
+Running: Actiontec embedded, Linux 2.4.X|3.X, Microsoft Windows XP|7|2012
+OS CPE: cpe:/h:actiontec:mi424wr-gen3i cpe:/o:linux:linux_kernel cpe:/o:linux:linux_kernel:2.4.37 cpe:/o:linux:linux_kernel:3.2 cpe:/o:microsoft:windows_xp::sp3 cpe:/o:microsoft:windows_7 cpe:/o:microsoft:windows_server_2012
+OS details: Actiontec MI424WR-GEN3I WAP, DD-WRT v24-sp2 (Linux 2.4.37), Linux 3.2, Microsoft Windows XP SP3, Microsoft Windows XP SP3 or Windows 7 or Windows Server 2012
+Network Distance: 15 hops
+
+TRACEROUTE (using proto 1/icmp)
+HOP RTT      ADDRESS
+1   0.16 ms  192.168.159.2
+2   ... 14
+15  35.47 ms kix07s03-in-f14.1e100.net (172.217.161.206)
+
+OS and Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sun Sep  4 15:19:22 2022 -- 1 IP address (1 host up) scanned in 67670.00 seconds
