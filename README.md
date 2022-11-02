@@ -1,6 +1,8 @@
 # bashNmap
-Ip Tracking Program
+<b>Simple bash program . </b>
 
-The first menu is to scan the entire ip <br>
-The second menu shows the location of the ip with Google Maps <br>
-Menu 3 creates a tracking domain based on apache (ngrok)
+# Install
+* kali linux 
+* git clone https://github.com/rap0at/bashNmap.git
+* ./installer.sh
+* ./bashNmap
