@@ -65,7 +65,7 @@ printf "\e[0m\n"
 read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Input IP Address \e[0m\e[1;96m: \e[0m\e[1;93m\en' useripaddress
 whois $useripaddress
 	dig $useripaddress +trace ANY
-	nmap -p 1-65535 -Pn -T4 -A -vvv -O --script vuln $useripaddress --oN vuln.txt
+	nmap -p 1-65535 -Pn -T4 -A -vvv -sV -sS -sU -O --script vuln $useripaddress --oN vuln.txt
         curl -ILk $useripaddress
         curl -Lk $useripaddress/robots.txt
         curl -sI $useripaddress | grep 200 && lynx -listonly -dump $useripaddress | awk '{print $2}' | sort -u | grep -v links: || curl -sI $useripaddress | grep Location | awk '{print $2}' | lynx -listonly -dump - | awk '{print $2}' | sort -u | grep -v links:
