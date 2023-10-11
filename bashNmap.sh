@@ -25,10 +25,9 @@ printf "\e[0m\e[1;31m  [\e[0m\e[1;37m01\e[0m\e[1;31m]\e[0m\e[1;33m Whole Scan\e[
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m02\e[0m\e[1;31m]\e[0m\e[1;33m Track Ip\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m03\e[0m\e[1;31m]\e[0m\e[1;33m Track URL Ip\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m04\e[0m\e[1;31m]\e[0m\e[1;33m hound\e[0m\n"
-printf "\e[0m\e[1;31m  [\e[0m\e[1;37m05\e[0m\e[1;31m]\e[0m\e[1;33m anonphisher\e[0m\n"
-printf "\e[0m\e[1;31m  [\e[0m\e[1;37m06\e[0m\e[1;31m]\e[0m\e[1;33m unFlare\e[0m\n"
-printf "\e[0m\e[1;31m  [\e[0m\e[1;37m07\e[0m\e[1;31m]\e[0m\e[1;33m bashEXE\e[0m\n"
-printf "\e[0m\e[1;31m  [\e[0m\e[1;37m08\e[0m\e[1;31m]\e[0m\e[1;33m pentmenu\e[0m\n"
+printf "\e[0m\e[1;31m  [\e[0m\e[1;37m05\e[0m\e[1;31m]\e[0m\e[1;33m unFlare\e[0m\n"
+printf "\e[0m\e[1;31m  [\e[0m\e[1;37m06\e[0m\e[1;31m]\e[0m\e[1;33m bashEXE\e[0m\n"
+printf "\e[0m\e[1;31m  [\e[0m\e[1;37m07\e[0m\e[1;31m]\e[0m\e[1;33m pentmenu\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m00\e[0m\e[1;31m]\e[0m\e[1;33m Exit\e[0m\n"
 printf "\e[0m\n"
 read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Select An Option \e[0m\e[1;96m: \e[0m\e[1;93m\en' option
@@ -42,12 +41,10 @@ trackurl
 elif [[ $option == 4 || $option == 04 ]]; then
 hound
 elif [[ $option == 5 || $option == 05 ]]; then
-anonphisher
-elif [[ $option == 6 || $option == 06 ]]; then
 unFlare
-elif [[ $option == 7 || $option == 07 ]]; then
+elif [[ $option == 6 || $option == 06 ]]; then
 bashEXE
-elif [[ $option == 8 || $option == 08 ]]; then
+elif [[ $option == 7 || $option == 07 ]]; then
 pentmenu
 elif [[ $option == 0 || $option == 00 ]]; then
 sleep 1
