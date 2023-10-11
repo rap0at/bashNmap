@@ -3,6 +3,7 @@ cp -r bashNmap /usr/local/sbin
 cp -r bashNmap /usr/bin
 cp -r ngrok /usr/local/sbin
 cp -r ngrok_64 /usr/bin
+apt -y install php unzip git wget
 
 echo '\e[1;33m
  _              _     , _                          
