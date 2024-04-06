@@ -28,38 +28,45 @@ printf "\e[0m\e[1;31m  [\e[0m\e[1;37m04\e[0m\e[1;31m]\e[0m\e[1;33m hound\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m05\e[0m\e[1;31m]\e[0m\e[1;33m unFlare\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m06\e[0m\e[1;31m]\e[0m\e[1;33m bashEXE\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m07\e[0m\e[1;31m]\e[0m\e[1;33m pentmenu\e[0m\n"
+printf "\e[0m\e[1;31m  [\e[0m\e[1;37m08\e[0m\e[1;31m]\e[0m\e[1;33m SocialMediaHackingToolkit\e[0m\n"
+printf "\e[0m\e[1;31m  [\e[0m\e[1;37m09\e[0m\e[1;31m]\e[0m\e[1;33m Fakedatagen\e[0m\n"
+printf "\e[0m\e[1;31m  [\e[0m\e[1;37m10\e[0m\e[1;31m]\e[0m\e[1;33m GoldenEye\e[0m\n"
+printf "\e[0m\e[1;31m  [\e[0m\e[1;37m11\e[0m\e[1;31m]\e[0m\e[1;33m Impulse\e[0m\n"
+printf "\e[0m\e[1;31m  [\e[0m\e[1;\e[0m\e[1;31m]\e[0m\e[1;33m exitbanner&&program\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m00\e[0m\e[1;31m]\e[0m\e[1;33m Exit\e[0m\n"
 printf "\e[0m\n"
-read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Select An Option \e[0m\e[1;96m: \e[0m\e[1;93m\en' option
+read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Select An Option \e[0m\e[1;96m: \e[0m\e[1;93m' option
 
 if [[ $option == 1 || $option == 01 ]]; then
-wholeScan
+    wholeScan
 elif [[ $option == 2 || $option == 02 ]]; then
-useripaddr
+    useripaddr
 elif [[ $option == 3 || $option == 03 ]]; then
-trackurl
+    trackurl
 elif [[ $option == 4 || $option == 04 ]]; then
-hound
+    hound
 elif [[ $option == 5 || $option == 05 ]]; then
-unFlare
+    unFlare
 elif [[ $option == 6 || $option == 06 ]]; then
-bashEXE
+    bashEXE
 elif [[ $option == 7 || $option == 07 ]]; then
-pentmenu
+    pentmenu
+elif [[ $option == 8 || $option == 08 ]]; then
+    SocialMediaHackingToolkit
+elif [[ $option == 9 || $option == 09 ]]; then
+    Fakedatagen
+elif [[ $option == 10 ]]; then
+    GoldenEye
+elif [[ $option == 11 ]]; then
+    Impulse
 elif [[ $option == 0 || $option == 00 ]]; then
-sleep 1
-printf "\e[0m\n"
-printf "\e[0m\n"
-exit 1
-
-else
-printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
-sleep 1
-banner
-menu
+    sleep 1
+    printf "\e[0m\n"
+    printf "\e[0m\n"
+    exit 1
 fi
-
 }
+
 
 wholeScan(){
 banner
@@ -98,6 +105,7 @@ banner
 menu
 fi
 }
+
 
 useripaddr() {
 
@@ -2127,6 +2135,155 @@ printf "\e[0m\n"
 printf "\e[0m\n"
 exit 1
 
+else
+printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
+sleep 1
+banner
+menu
+fi
+
+}
+SocialMediaHackingToolkit() {
+    #!/bin/bash
+xterm -e python3 cmd/main.py
+sleep 5
+printf "\e[0m\n"
+printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
+printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
+printf "\e[0m\n"
+read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
+
+if [[ $mainorexit1 == 1 || $mainorexit1 == 01 ]]; then
+banner
+menu
+elif [[ $mainorexit1 == 2 || $mainorexit1 == 02 ]]; then
+printf "\e[0m\n"
+printf "\e[0m\n"
+exit 1
+
+else
+printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
+sleep 1
+banner
+menu
+fi
+
+}
+
+Fakedatagen() {
+    banner
+    xterm -e bash -c '
+        python3 FakeDataGen.py
+        read -p "Press Enter to close this window..." input
+    ' &
+
+    printf "\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
+    printf "\e[0m\n"
+
+    while true; do
+        read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
+
+        if [[ $mainorexit3 == 1 || $mainorexit3 == 01 ]]; then
+            killall xterm
+            banner
+            menu
+        elif [[ $mainorexit3 == 2 || $mainorexit3 == 02 ]]; then
+            killall xterm
+            printf "\e[0m\n"
+            printf "\e[0m\n"
+            exit 1
+        else
+            printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
+            sleep 1
+            banner
+            menu
+        fi
+    done
+}
+
+
+
+
+
+GoldenEye() {
+    banner
+    xterm -e "bash -c 'python3 goldeneye.py -h; read -p \"Press Enter to close this window...\" input'" &
+
+    printf "\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
+    printf "\e[0m\n"
+
+    while true; do
+        read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
+
+        if [[ $mainorexit3 == 1 || $mainorexit3 == 01 ]]; then
+            killall xterm
+            banner
+            menu
+        elif [[ $mainorexit3 == 2 || $mainorexit3 == 02 ]]; then
+            killall xterm
+            printf "\e[0m\n"
+            printf "\e[0m\n"
+            exit 1
+        else
+            printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
+            sleep 1
+            banner
+            menu
+        fi
+    done
+}
+
+Impulse() {
+    banner
+    xterm -e "bash -c 'python3 impulse.py -h; read -p \"Press Enter to close this window...\" input'" &
+
+    printf "\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
+    printf "\e[0m\n"
+
+    while true; do
+        read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
+
+        if [[ $mainorexit3 == 1 || $mainorexit3 == 01 ]]; then
+            killall xterm
+            banner
+            menu
+        elif [[ $mainorexit3 == 2 || $mainorexit3 == 02 ]]; then
+            killall xterm
+            printf "\e[0m\n"
+            printf "\e[0m\n"
+            exit 1
+        else
+            printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
+            sleep 1
+            banner
+            menu
+        fi
+    done
+}
+
+
+exitbanner&&program() {
+    sleep 5
+printf "\e[0m\n"
+printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
+printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
+printf "\e[0m\n"
+read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
+
+if [[ $mainorexit1 == 1 || $mainorexit1 == 01 ]]; then
+banner
+menu
+elif [[ $mainorexit1 == 2 || $mainorexit1 == 02 ]]; then
+printf "\e[0m\n"
+printf "\e[0m\n"
+exit 1
+
 elif [ "$x" == "$me" ]; then                 #CONTACT WITH ME                      
 
 clear
@@ -2162,3 +2319,4 @@ fi
 
 banner
 menu
+

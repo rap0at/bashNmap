@@ -1,0 +1,12 @@
+pandas
+argparse
+pyminizip
+tabulate
+termcolor
+requests
+scapy
+wget
+argparse
+colorama
+humanfriendly
+instaloader
