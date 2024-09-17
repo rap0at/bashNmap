@@ -32,6 +32,7 @@ printf "\e[0m\e[1;31m  [\e[0m\e[1;37m08\e[0m\e[1;31m]\e[0m\e[1;33m SocialMediaHa
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m09\e[0m\e[1;31m]\e[0m\e[1;33m Fakedatagen\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m10\e[0m\e[1;31m]\e[0m\e[1;33m GoldenEye\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m11\e[0m\e[1;31m]\e[0m\e[1;33m Impulse\e[0m\n"
+printf "\e[0m\e[1;31m  [\e[0m\e[1;37m12\e[0m\e[1;31m]\e[0m\e[1;33m Web\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;\e[0m\e[1;31m]\e[0m\e[1;33m exitbanner&&program\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m00\e[0m\e[1;31m]\e[0m\e[1;33m Exit\e[0m\n"
 printf "\e[0m\n"
@@ -59,6 +60,8 @@ elif [[ $option == 10 ]]; then
     GoldenEye
 elif [[ $option == 11 ]]; then
     Impulse
+	elif [[ $option == 12 ]]; then
+    Web
 elif [[ $option == 0 || $option == 00 ]]; then
     sleep 1
     printf "\e[0m\n"
@@ -2267,6 +2270,184 @@ Impulse() {
     done
 }
 
+Web(){
+	banner
+	printf "\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m01\e[0m\e[1;31m]\e[0m\e[1;33m Xlsninja\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m02\e[0m\e[1;31m]\e[0m\e[1;33m 4-zero-3\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m03\e[0m\e[1;31m]\e[0m\e[1;33m MagicRecon\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m04\e[0m\e[1;31m]\e[0m\e[1;33m SpyHunt\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m05\e[0m\e[1;31m]\e[0m\e[1;33m jok3r\e[0m\n"
+	printf "\e[0m\n"
+	read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Select An Option \e[0m\e[1;96m: \e[0m\e[1;93m' option
+
+if [[ $option == 1 || $option == 01 ]]; then
+    Xlsninja
+elif [[ $option == 2 || $option == 02 ]]; then
+    4-zero-3
+elif [[ $option == 3 || $option == 03 ]]; then
+    MagicRecon
+elif [[ $option == 4 || $option == 04 ]]; then
+    SpyHunt
+elif [[ $option == 5 || $option == 05 ]]; then
+	jok3r
+elif [[ $option == 0 || $option == 00 ]]; then
+    sleep 1
+    printf "\e[0m\n"
+    printf "\e[0m\n"
+    exit 1
+fi
+}
+
+Xlsninja(){
+	banner
+    xterm -e "bash -c 'python3 xlsNinja.py -h; read -p \"Press Enter to close this window...\" input'" &
+
+    printf "\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
+    printf "\e[0m\n"
+
+    while true; do
+        read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
+
+        if [[ $mainorexit3 == 1 || $mainorexit3 == 01 ]]; then
+            killall xterm
+            banner
+            menu
+        elif [[ $mainorexit3 == 2 || $mainorexit3 == 02 ]]; then
+            killall xterm
+            printf "\e[0m\n"
+            printf "\e[0m\n"
+            exit 1
+        else
+            printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
+            sleep 1
+            banner
+            menu
+        fi
+    done
+}
+
+4-zero-3(){
+	banner
+    xterm -e "bash -c './403-bypass.sh -h; read -p \"Press Enter to close this window...\" input'" &
+
+    printf "\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
+    printf "\e[0m\n"
+
+    while true; do
+        read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
+
+        if [[ $mainorexit3 == 1 || $mainorexit3 == 01 ]]; then
+            killall xterm
+            banner
+            menu
+        elif [[ $mainorexit3 == 2 || $mainorexit3 == 02 ]]; then
+            killall xterm
+            printf "\e[0m\n"
+            printf "\e[0m\n"
+            exit 1
+        else
+            printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
+            sleep 1
+            banner
+            menu
+        fi
+    done
+}
+
+MagicRecon(){
+	banner
+    xterm -e "bash -c './magicrecon.sh -h; read -p \"Press Enter to close this window...\" input'" &
+
+    printf "\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
+    printf "\e[0m\n"
+
+    while true; do
+        read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
+
+        if [[ $mainorexit3 == 1 || $mainorexit3 == 01 ]]; then
+            killall xterm
+            banner
+            menu
+        elif [[ $mainorexit3 == 2 || $mainorexit3 == 02 ]]; then
+            killall xterm
+            printf "\e[0m\n"
+            printf "\e[0m\n"
+            exit 1
+        else
+            printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
+            sleep 1
+            banner
+            menu
+        fi
+    done
+}
+
+SpyHunt(){
+	banner
+    xterm -e "bash -c 'python3 spyhunt.py -h; read -p \"Press Enter to close this window...\" input'" &
+
+    printf "\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
+    printf "\e[0m\n"
+
+    while true; do
+        read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
+
+        if [[ $mainorexit3 == 1 || $mainorexit3 == 01 ]]; then
+            killall xterm
+            banner
+            menu
+        elif [[ $mainorexit3 == 2 || $mainorexit3 == 02 ]]; then
+            killall xterm
+            printf "\e[0m\n"
+            printf "\e[0m\n"
+            exit 1
+        else
+            printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
+            sleep 1
+            banner
+            menu
+        fi
+    done
+}
+
+jok3r(){
+	banner
+    xterm -e "bash -c 'python3 jok3r.py -h; read -p \"Press Enter to close this window...\" input'" &
+
+    printf "\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
+    printf "\e[0m\n"
+
+    while true; do
+        read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
+
+        if [[ $mainorexit3 == 1 || $mainorexit3 == 01 ]]; then
+            killall xterm
+            banner
+            menu
+        elif [[ $mainorexit3 == 2 || $mainorexit3 == 02 ]]; then
+            killall xterm
+            printf "\e[0m\n"
+            printf "\e[0m\n"
+            exit 1
+        else
+            printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
+            sleep 1
+            banner
+            menu
+        fi
+    done
+}
 
 exitbanner&&program() {
     sleep 5
