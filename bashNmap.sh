@@ -33,6 +33,7 @@ printf "\e[0m\e[1;31m  [\e[0m\e[1;37m09\e[0m\e[1;31m]\e[0m\e[1;33m Fakedatagen\e
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m10\e[0m\e[1;31m]\e[0m\e[1;33m GoldenEye\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m11\e[0m\e[1;31m]\e[0m\e[1;33m Impulse\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m12\e[0m\e[1;31m]\e[0m\e[1;33m Web\e[0m\n"
+printf "\e[0m\e[1;31m  [\e[0m\e[1;37m13\e[0m\e[1;31m]\e[0m\e[1;33m Osint\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;\e[0m\e[1;31m]\e[0m\e[1;33m exitbanner&&program\e[0m\n"
 printf "\e[0m\e[1;31m  [\e[0m\e[1;37m00\e[0m\e[1;31m]\e[0m\e[1;33m Exit\e[0m\n"
 printf "\e[0m\n"
@@ -60,8 +61,10 @@ elif [[ $option == 10 ]]; then
     GoldenEye
 elif [[ $option == 11 ]]; then
     Impulse
-	elif [[ $option == 12 ]]; then
+elif [[ $option == 12 ]]; then
     Web
+elif [[ $option == 13 ]]; then
+    Osint
 elif [[ $option == 0 || $option == 00 ]]; then
     sleep 1
     printf "\e[0m\n"
@@ -79,7 +82,7 @@ printf "\e[0m\n"
 read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Input IP Address \e[0m\e[1;96m: \e[0m\e[1;93m\en' useripaddress
 whois $useripaddress
 	dig $useripaddress +trace ANY
-	nmap -p 1-65535 -Pn -T4 -A -vvv -sV -sS -sU -O --script vuln $useripaddress --oN vuln.txt
+	nmap -p 1-65535 -Pn -T4 -A -v -sV -sC -O --script vuln $useripaddress --oN vuln.txt
         curl -ILk $useripaddress
         curl -Lk $useripaddress/robots.txt
         curl -sI $useripaddress | grep 200 && lynx -listonly -dump $useripaddress | awk '{print $2}' | sort -u | grep -v links: || curl -sI $useripaddress | grep Location | awk '{print $2}' | lynx -listonly -dump - | awk '{print $2}' | sort -u | grep -v links:
@@ -2278,6 +2281,10 @@ Web(){
 	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m03\e[0m\e[1;31m]\e[0m\e[1;33m MagicRecon\e[0m\n"
 	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m04\e[0m\e[1;31m]\e[0m\e[1;33m SpyHunt\e[0m\n"
 	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m05\e[0m\e[1;31m]\e[0m\e[1;33m jok3r\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m06\e[0m\e[1;31m]\e[0m\e[1;33m Ip-Rover\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m07\e[0m\e[1;31m]\e[0m\e[1;33m Http-Smuggling\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m08\e[0m\e[1;31m]\e[0m\e[1;33m CVE-2021-41773\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m09\e[0m\e[1;31m]\e[0m\e[1;33m Nginxpwner\e[0m\n"
 	printf "\e[0m\n"
 	read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Select An Option \e[0m\e[1;96m: \e[0m\e[1;93m' option
 
@@ -2291,6 +2298,10 @@ elif [[ $option == 4 || $option == 04 ]]; then
     SpyHunt
 elif [[ $option == 5 || $option == 05 ]]; then
 	jok3r
+elif [[ $option == 5 || $option == 06 ]]; then
+	Ip-Rover	
+elif [[ $option == 5 || $option == 07 ]]; then
+	Http-Smuggling	
 elif [[ $option == 0 || $option == 00 ]]; then
     sleep 1
     printf "\e[0m\n"
@@ -2301,152 +2312,81 @@ fi
 
 Xlsninja(){
 	banner
-    xterm -e "bash -c 'python3 xlsNinja.py -h; read -p \"Press Enter to close this window...\" input'" &
-
-    printf "\e[0m\n"
-    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
-    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
-    printf "\e[0m\n"
-
-    while true; do
-        read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
-
-        if [[ $mainorexit3 == 1 || $mainorexit3 == 01 ]]; then
-            killall xterm
-            banner
-            menu
-        elif [[ $mainorexit3 == 2 || $mainorexit3 == 02 ]]; then
-            killall xterm
-            printf "\e[0m\n"
-            printf "\e[0m\n"
-            exit 1
-        else
-            printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
-            sleep 1
-            banner
-            menu
-        fi
-    done
+	python3 xlsNinja.py -h;
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 xlsNinja.py\e[0m\n"
 }
 
 4-zero-3(){
 	banner
-    xterm -e "bash -c './403-bypass.sh -h; read -p \"Press Enter to close this window...\" input'" &
+	./403-bypass.sh -h;
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) ./403-bypass.sh\e[0m\n"
 
-    printf "\e[0m\n"
-    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
-    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
-    printf "\e[0m\n"
-
-    while true; do
-        read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
-
-        if [[ $mainorexit3 == 1 || $mainorexit3 == 01 ]]; then
-            killall xterm
-            banner
-            menu
-        elif [[ $mainorexit3 == 2 || $mainorexit3 == 02 ]]; then
-            killall xterm
-            printf "\e[0m\n"
-            printf "\e[0m\n"
-            exit 1
-        else
-            printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
-            sleep 1
-            banner
-            menu
-        fi
-    done
 }
 
 MagicRecon(){
 	banner
-    xterm -e "bash -c './magicrecon.sh -h; read -p \"Press Enter to close this window...\" input'" &
-
-    printf "\e[0m\n"
-    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
-    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
-    printf "\e[0m\n"
-
-    while true; do
-        read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
-
-        if [[ $mainorexit3 == 1 || $mainorexit3 == 01 ]]; then
-            killall xterm
-            banner
-            menu
-        elif [[ $mainorexit3 == 2 || $mainorexit3 == 02 ]]; then
-            killall xterm
-            printf "\e[0m\n"
-            printf "\e[0m\n"
-            exit 1
-        else
-            printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
-            sleep 1
-            banner
-            menu
-        fi
-    done
+    ./magicrecon.sh -h;
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) ./magicrecon.sh\e[0m\n"
 }
 
 SpyHunt(){
 	banner
-    xterm -e "bash -c 'python3 spyhunt.py -h; read -p \"Press Enter to close this window...\" input'" &
-
-    printf "\e[0m\n"
-    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
-    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
-    printf "\e[0m\n"
-
-    while true; do
-        read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
-
-        if [[ $mainorexit3 == 1 || $mainorexit3 == 01 ]]; then
-            killall xterm
-            banner
-            menu
-        elif [[ $mainorexit3 == 2 || $mainorexit3 == 02 ]]; then
-            killall xterm
-            printf "\e[0m\n"
-            printf "\e[0m\n"
-            exit 1
-        else
-            printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
-            sleep 1
-            banner
-            menu
-        fi
-    done
+	python3 spyhunt.py -h;
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 spyhunt.py\e[0m\n"
 }
 
 jok3r(){
 	banner
-    xterm -e "bash -c 'python3 jok3r.py -h; read -p \"Press Enter to close this window...\" input'" &
+	python3 jok3r.py
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 jok3r.py\e[0m\n"
+}
 
+Ip-Rover(){
+	banner
+	python3 finder.py
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 finder.py\e[0m\n"
+}
+
+Http-Smuggling(){
+	banner
+	python3 smuggle.py
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 smuggle.py\e[0m\n"
+}
+
+CVE-2021-41773(){
+	banner
+	python3 exploit.py
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 exploit.py\e[0m\n"
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) apache 2.4.49~50 RCE exploit\e[0m\n"
+}
+
+Nginxpwner(){
+	banner
+	python3 nginxpwner.py
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 nginxpwner.py\e[0m\n"
+}
+
+Osint(){
+	banner
+	printf "\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m01\e[0m\e[1;31m]\e[0m\e[1;33m Eyes\e[0m\n" 
+	printf "\e[0m\n"
+	read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Select An Option \e[0m\e[1;96m: \e[0m\e[1;93m' option
+
+if [[ $option == 1 || $option == 01 ]]; then
+    Eyes
+elif [[ $option == 0 || $option == 00 ]]; then
+    sleep 1
     printf "\e[0m\n"
-    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
-    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
     printf "\e[0m\n"
+    exit 1
+fi
+}
 
-    while true; do
-        read -p $'  \e[1;31m>>\e[0m\e[1;96m  \en' mainorexit3
-
-        if [[ $mainorexit3 == 1 || $mainorexit3 == 01 ]]; then
-            killall xterm
-            banner
-            menu
-        elif [[ $mainorexit3 == 2 || $mainorexit3 == 02 ]]; then
-            killall xterm
-            printf "\e[0m\n"
-            printf "\e[0m\n"
-            exit 1
-        else
-            printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
-            sleep 1
-            banner
-            menu
-        fi
-    done
+Eyes(){
+	banner
+	python3 eyes.py
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 eyes.py\e[0m\n"
 }
 
 exitbanner&&program() {
