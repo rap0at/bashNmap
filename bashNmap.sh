@@ -2298,10 +2298,14 @@ elif [[ $option == 4 || $option == 04 ]]; then
     SpyHunt
 elif [[ $option == 5 || $option == 05 ]]; then
 	jok3r
-elif [[ $option == 5 || $option == 06 ]]; then
+elif [[ $option == 6 || $option == 06 ]]; then
 	Ip-Rover	
-elif [[ $option == 5 || $option == 07 ]]; then
+elif [[ $option == 7 || $option == 07 ]]; then
 	Http-Smuggling	
+elif [[ $option == 8 || $option == 08 ]]; then
+	CVE-2021-41773
+elif [[ $option == 9 || $option == 09 ]]; then
+	Nginxpwner
 elif [[ $option == 0 || $option == 00 ]]; then
     sleep 1
     printf "\e[0m\n"
@@ -2337,32 +2341,32 @@ SpyHunt(){
 
 jok3r(){
 	banner
-	python3 jok3r.py
+	python3 jok3r.py -h;
     printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 jok3r.py\e[0m\n"
 }
 
 Ip-Rover(){
 	banner
-	python3 finder.py
+	python3 finder.py -h;
 	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 finder.py\e[0m\n"
 }
 
 Http-Smuggling(){
 	banner
-	python3 smuggle.py
+	python3 smuggle.py -h;
 	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 smuggle.py\e[0m\n"
 }
 
 CVE-2021-41773(){
 	banner
-	python3 exploit.py
+	python3 exploit.py -h;
 	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 exploit.py\e[0m\n"
 	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) apache 2.4.49~50 RCE exploit\e[0m\n"
 }
 
 Nginxpwner(){
 	banner
-	python3 nginxpwner.py
+	python3 nginxpwner.py -h;
 	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 nginxpwner.py\e[0m\n"
 }
 
@@ -2385,7 +2389,7 @@ fi
 
 Eyes(){
 	banner
-	python3 eyes.py
+	python3 eyes.py -h;
 	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 eyes.py\e[0m\n"
 }
 
