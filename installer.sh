@@ -10,8 +10,8 @@ cd Kyubi && sudo python3 setup.py install && pip3 install -r /opt/nginxpwner/req
 python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
-./1.sh
-./2.sh
+bash 1.sh
+bash 2.sh
 echo '\e[1;33m
  _              _     , _                          
 | |            | |   /|/ \                         
