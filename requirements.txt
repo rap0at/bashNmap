@@ -1,4 +1,3 @@
-cybermedium
 pandas
 argparse
 pyminizip
