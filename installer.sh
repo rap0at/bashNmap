@@ -7,6 +7,8 @@ apt -y install php unzip git wget
 gobuster
 git clone https://github.com/shibli2700/Kyubi.git
 cd Kyubi && sudo python3 setup.py install && pip3 install -r /opt/nginxpwner/requirements.txt
+python3 -m venv venv
+source venv/bin/activate
 pip3 install -r reqrequirements.txt
 ./1.sh
 ./2.sh
