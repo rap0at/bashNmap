@@ -12,6 +12,7 @@ source venv/bin/activate
 pip3 install -r requirements.txt
 bash 1.sh
 bash 2.sh
+./isntall.sh
 echo '\e[1;33m
  _              _     , _                          
 | |            | |   /|/ \                         
