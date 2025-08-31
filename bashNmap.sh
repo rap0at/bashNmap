@@ -82,7 +82,7 @@ printf "\e[0m\n"
 read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Input IP Address \e[0m\e[1;96m: \e[0m\e[1;93m\en' useripaddress
 whois $useripaddress
 	dig $useripaddress +trace ANY
-	nmap -p 1-65535 -Pn -T4 -A -v -sV -sC -O --script vuln $useripaddress --oN vuln.txt
+	nmap -p- -sV -sC -sS -A -v -O -Pn -T4 --script vuln --script http-waf-detect --oN nmap.txt $useripaddress
         curl -ILk $useripaddress
         curl -Lk $useripaddress/robots.txt
         curl -sI $useripaddress | grep 200 && lynx -listonly -dump $useripaddress | awk '{print $2}' | sort -u | grep -v links: || curl -sI $useripaddress | grep Location | awk '{print $2}' | lynx -listonly -dump - | awk '{print $2}' | sort -u | grep -v links:
@@ -2285,6 +2285,7 @@ Web(){
 	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m07\e[0m\e[1;31m]\e[0m\e[1;33m Http-Smuggling\e[0m\n"
 	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m08\e[0m\e[1;31m]\e[0m\e[1;33m CVE-2021-41773\e[0m\n"
 	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m09\e[0m\e[1;31m]\e[0m\e[1;33m Nginxpwner\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m10\e[0m\e[1;31m]\e[0m\e[1;33m autoreport\e[0m\n"
 	printf "\e[0m\n"
 	read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Select An Option \e[0m\e[1;96m: \e[0m\e[1;93m' option
 
@@ -2306,6 +2307,8 @@ elif [[ $option == 8 || $option == 08 ]]; then
 	CVE-2021-41773
 elif [[ $option == 9 || $option == 09 ]]; then
 	Nginxpwner
+elif [[ $option == 10 || $option == 010 ]]; then
+	autoreport
 elif [[ $option == 0 || $option == 00 ]]; then
     sleep 1
     printf "\e[0m\n"
@@ -2369,6 +2372,98 @@ Nginxpwner(){
 	python3 nginxpwner.py -h;
 	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 nginxpwner.py\e[0m\n"
 }
+
+autoreport(){
+    banner
+    printf "\e[0m\n\e[0m\n\e[0m\n"
+
+    # ---- settings ----
+    local TARGET_FILE="target.txt"
+    local ts outdir
+    ts="$(date '+%Y%m%d_%H%M%S')"
+    outdir="report_${ts}"
+    mkdir -p "$outdir"
+
+    # ---- helpers (scoped to this function) ----
+    validate_target() {
+        local t="$1"
+        local re_ip='^(([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
+        local re_domain='^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}$'
+        [[ "$t" =~ $re_ip || "$t" =~ $re_domain ]]
+    }
+    require_cmd() {
+        command -v "$1" >/dev/null 2>&1 || {
+            printf "  \e[1;91m[!]\e[0m '%s' not found. Please install it first.\n" "$1"
+            return 1
+        }
+    }
+
+    # ---- collect targets ----
+    : > "$TARGET_FILE"
+    printf "  \e[1;92mEnter domain or IP per line (empty line to finish)\e[0m\n"
+    while true; do
+        read -r -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Target \e[0m\e[1;96m: \e[0m' t
+        [[ -z "$t" ]] && break
+        if validate_target "$t"; then
+            printf "%s\n" "$t" >> "$TARGET_FILE"
+            printf "    \e[1;92m+\e[0m added: %s\n" "$t"
+        else
+            printf "    \e[1;91m!\e[0m invalid: %s (expect IPv4 or domain)\n" "$t"
+        fi
+    done
+
+    if [[ ! -s "$TARGET_FILE" ]]; then
+        printf "  \e[1;91m[!]\e[0m No valid targets. Returning to menu.\n"
+        sleep 1
+        banner
+        menu
+        return
+    fi
+
+    printf "\n  \e[1;96mTargets count:\e[0m $(wc -l < "$TARGET_FILE")\n"
+    printf "  \e[1;96mSaved list:\e[0m %s\n\n" "$TARGET_FILE"
+
+    # ---- dependency checks ----
+    require_cmd whatweb || { sleep 1; banner; menu; return; }
+    require_cmd nmap    || { sleep 1; banner; menu; return; }
+    require_cmd sniper  || { sleep 1; banner; menu; return; }
+
+    # ---- scans ----
+    printf "  \e[1;93m[▶]\e[0m WhatWeb...\n"
+    whatweb --log-verbose="${outdir}/whatweb.txt" -i "$TARGET_FILE"
+
+    printf "  \e[1;93m[▶]\e[0m Nmap...\n"
+    nmap -p- -sV -sC -sS -A -v -O -Pn -T4 \
+         --script vuln,http-waf-detect \
+         -iL "$TARGET_FILE" \
+         -oN "${outdir}/nmap.txt"
+
+    printf "  \e[1;93m[▶]\e[0m Sn1per...\n"
+    # workdir = report folder so results stay grouped
+    sniper -f "$TARGET_FILE" -o -re -m nuke -w "$outdir"
+
+    printf "\n  \e[1;92mDone!\e[0m Results saved in \e[1;97m%s\e[0m\n\n" "$outdir"
+
+    # ---- post menu (keep variable name as existing code expects) ----
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
+    printf "\e[0m\n"
+    read -r -p $'  \e[1;31m>>\e[0m\e[1;96m  \e[0m' mainorexit1
+
+    if [[ $mainorexit1 == 1 || $mainorexit1 == 01 ]]; then
+        banner
+        menu
+    elif [[ $mainorexit1 == 2 || $mainorexit1 == 02 ]]; then
+        printf "\e[0m\n\e[0m\n"
+        exit 1
+    else
+        printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
+        sleep 1
+        banner
+        menu
+    fi
+}
+
 
 Osint(){
 	banner
