@@ -2423,6 +2423,49 @@ autoreport(){
     printf "\n  \e[1;96mTargets count:\e[0m $(wc -l < "$TARGET_FILE")\n"
     printf "  \e[1;96mSaved list:\e[0m %s\n\n" "$TARGET_FILE"
 
+    # ---- Smuggle phase (added) ----
+    # Run smuggleAuto.py FIRST for each target and collect per-target HTML reports into $outdir/smuggle/<host>/
+    printf "  \e[1;93m[▶]\e[0m Smuggle (smuggleAuto.py)...\n"
+    local SMUGGLE_PY="./smuggleAuto.py"
+    local smuggle_root="${outdir}/smuggle"
+    mkdir -p "$smuggle_root"
+
+    if [[ ! -f "$SMUGGLE_PY" ]]; then
+        printf "  \e[1;91m[!]\e[0m smuggleAuto.py not found in current directory. Skipping smuggle phase.\n"
+    else
+        while IFS= read -r host || [[ -n "$host" ]]; do
+            host="${host//$'\r'/}"
+            [[ -z "$host" ]] && continue
+            printf "    \e[1;94m[i]\e[0m Target: %s\n" "$host"
+
+            # Execute smuggle scan; save full log per host
+            local host_log="${smuggle_root}/${host}.log"
+            local _out
+            _out="$(python3 "$SMUGGLE_PY" --mode auto --host "$host" 2>&1)"
+            printf "%s\n" "$_out" > "$host_log"
+
+            # Try to parse report path from smuggle output
+            local rpt_path src_dir dst_dir
+            rpt_path="$(echo "$_out" | grep -oE 'report_SMUGGLE_[^[:space:]]+/report\.html' | tail -n1)"
+
+            # Fallback: find the freshest report.html created recently
+            if [[ -z "$rpt_path" || ! -f "$rpt_path" ]]; then
+                rpt_path="$(find . -maxdepth 3 -type f -name 'report.html' -printf '%T@ %p\n' 2>/dev/null | sort -n | awk '{print $2}' | tail -n1)"
+            fi
+
+            if [[ -n "$rpt_path" && -f "$rpt_path" ]]; then
+                src_dir="${rpt_path%/report.html}"
+                dst_dir="${smuggle_root}/${host}"
+                mkdir -p "$dst_dir"
+                # copy entire generated report folder so assets are preserved
+                cp -R "${src_dir}/." "$dst_dir/" 2>/dev/null
+                printf "      \e[1;92m[OK]\e[0m copied smuggle report → %s\n" "$dst_dir/report.html"
+            else
+                printf "      \e[1;91m[!]\e[0m smuggle report not found for %s (see %s)\n" "$host" "$host_log"
+            fi
+        done < "$TARGET_FILE"
+    fi
+
     # ---- dependency checks ----
     require_cmd whatweb || { sleep 1; banner; menu; return; }
     require_cmd nmap    || { sleep 1; banner; menu; return; }
@@ -2463,6 +2506,7 @@ autoreport(){
         menu
     fi
 }
+
 
 
 Osint(){
