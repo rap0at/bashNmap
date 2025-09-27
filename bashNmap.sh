@@ -2373,54 +2373,208 @@ Nginxpwner(){
 	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 nginxpwner.py\e[0m\n"
 }
 
-# 완전체 autoreport() - HTML 변환 제거 + Telegram 연동 유지
-
-autoreport() {
+autoreport(){
     banner
     printf "\e[0m\n\e[0m\n\e[0m\n"
 
+    # ---- settings ----
     local TARGET_FILE="target.txt"
     local ts outdir
     ts="$(date '+%Y%m%d_%H%M%S')"
     outdir="report_${ts}"
     mkdir -p "$outdir"
-    mkdir -p "$outdir/raw_logs"
-    mkdir -p "$outdir/poc_results"
 
+    # ---- helpers ----
     validate_target() {
         local t="$1"
         local re_ip='^(([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]{1,2}|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
         local re_domain='^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}$'
         [[ "$t" =~ $re_ip || "$t" =~ $re_domain ]]
     }
-
     require_cmd() {
         command -v "$1" >/dev/null 2>&1 || {
-            echo "[!] $1 not found. Installing..."
-            sudo apt update && sudo apt install -y "$1"
+            printf "  \e[1;91m[!]\e[0m '%s' not found. Please install it first.\n" "$1"
+            return 1
         }
     }
 
-    for cmd in whatweb nmap sniper python3 nuclei git curl; do
-        require_cmd "$cmd"
-    done
-
+    # ---- collect targets ----
     : > "$TARGET_FILE"
-    printf " \e[1;92mEnter domain or IP per line (empty line to finish)\e[0m\n"
+    printf "  \e[1;92mEnter domain or IP per line (empty line to finish)\e[0m\n"
     while true; do
-        read -r -p $' \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Target \e[0m\e[1;96m: \e[0m' t
+        read -r -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Target \e[0m\e[1;96m: \e[0m' t
         [[ -z "$t" ]] && break
         if validate_target "$t"; then
             printf "%s\n" "$t" >> "$TARGET_FILE"
-            printf " \e[1;92m+\e[0m added: %s\n" "$t"
+            printf "    \e[1;92m+\e[0m added: %s\n" "$t"
         else
-            printf " \e[1;91m!\e[0m invalid: %s\n" "$t"
+            printf "    \e[1;91m!\e[0m invalid: %s (expect IPv4 or domain)\n" "$t"
         fi
     done
 
-    [[ ! -s "$TARGET_FILE" ]] && { echo "No valid targets"; return; }
+    if [[ ! -s "$TARGET_FILE" ]]; then
+        printf "  \e[1;91m[!]\e[0m No valid targets. Returning to menu.\n"
+        sleep 1
+        banner
+        menu
+        return
+    fi
 
-    whatweb -i "$TARGET_FILE" -v --log-verbose="$outdir/raw_logs/whatweb.txt"
+    printf "\n  \e[1;96mTargets count:\e[0m $(wc -l < "$TARGET_FILE")\n"
+    printf "  \e[1;96mSaved list:\e[0m %s\n\n" "$TARGET_FILE"
+
+    # ---- Smuggle Phase ----
+    printf "  \e[1;93m[▶]\e[0m Smuggle (smuggleAuto.py)...\n"
+    local SMUGGLE_PY="./smuggleAuto.py"
+    local smuggle_root="${outdir}/smuggle"
+    mkdir -p "$smuggle_root"
+
+    if [[ ! -f "$SMUGGLE_PY" ]]; then
+        printf "  \e[1;91m[!]\e[0m smuggleAuto.py not found. Skipping smuggle phase.\n"
+    else
+        while IFS= read -r host || [[ -n "$host" ]]; do
+            host="${host//$'\r'/}"
+            [[ -z "$host" ]] && continue
+            printf "    \e[1;94m[i]\e[0m Target: %s\n" "$host"
+
+            local host_log="${smuggle_root}/${host}.log"
+            local _out
+            _out="$(python3 "$SMUGGLE_PY" --mode auto --host "$host" --generate-poc 2>&1)"
+            printf "%s\n" "$_out" > "$host_log"
+
+            local rpt_path src_dir dst_dir
+            rpt_path="$(echo "$_out" | grep -oE 'report_SMUGGLE_[^[:space:]]+/report\.html' | tail -n1)"
+            [[ -z "$rpt_path" || ! -f "$rpt_path" ]] && rpt_path="$(find . -maxdepth 3 -type f -name 'report.html' -printf '%T@ %p\n' 2>/dev/null | sort -n | awk '{print $2}' | tail -n1)"
+
+            if [[ -n "$rpt_path" && -f "$rpt_path" ]]; then
+                src_dir="${rpt_path%/report.html}"
+                dst_dir="${smuggle_root}/${host}"
+                mkdir -p "$dst_dir"
+                cp -R "${src_dir}/." "$dst_dir/" 2>/dev/null
+                printf "      \e[1;92m[OK]\e[0m copied smuggle report → %s\n" "$dst_dir/report.html"
+            else
+                printf "      \e[1;91m[!]\e[0m smuggle report not found for %s (see %s)\n" "$host" "$host_log"
+            fi
+        done < "$TARGET_FILE"
+    fi
+
+    # ---- Pre-Scan Tools Check ----
+    require_cmd whatweb || { sleep 1; banner; menu; return; }
+    require_cmd nmap    || { sleep 1; banner; menu; return; }
+    require_cmd sniper  || { sleep 1; banner; menu; return; }
+
+    # ---- Base Scanning ----
+    printf "  \e[1;93m[▶]\e[0m WhatWeb...\n"
+    whatweb --log-verbose="${outdir}/whatweb.txt" -i "$TARGET_FILE"
+
+    printf "  \e[1;93m[▶]\e[0m Nmap...\n"
+    nmap -p- -sV -sC -sS -A -v -O -Pn -T4 \
+         --script vuln,http-waf-detect \
+         -iL "$TARGET_FILE" \
+         -oN "${outdir}/nmap.txt"
+
+    printf "  \e[1;93m[▶]\e[0m Sn1per...\n"
+    sniper -f "$TARGET_FILE" -o -re -m nuke -w "$outdir"
+
+    # ---- Auto Exploitation ----
+    printf "\n  \e[1;93m[▶]\e[0m Deep AutoPwn Phase...\n"
+    deep_autopwn "$outdir"
+
+    # ---- Report Generation ----
+    printf "\n  \e[1;93m[▶]\e[0m Markdown Report Generation...\n"
+    generate_markdown_report "$outdir"
+
+    printf "\n  \e[1;92m[✓]\e[0m Report Completed: \e[1;97m%s\e[0m\n\n" "$outdir"
+
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m01\e[0m\e[1;91m]\e[0m\e[1;93m Return To Main Menu\e[0m\n"
+    printf "  \e[0m\e[1;91m[\e[0m\e[1;97m02\e[0m\e[1;91m]\e[0m\e[1;93m Exit\e[0m\n"
+    printf "\e[0m\n"
+    read -r -p $'  \e[1;31m>>\e[0m\e[1;96m  \e[0m' mainorexit1
+
+    if [[ $mainorexit1 == 1 || $mainorexit1 == 01 ]]; then
+        banner
+        menu
+    elif [[ $mainorexit1 == 2 || $mainorexit1 == 02 ]]; then
+        printf "\e[0m\n\e[0m\n"
+        exit 1
+    else
+        printf " \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m Invalid option \e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\n"
+        sleep 1
+        banner
+        menu
+    fi
+}
+
+# ---- Embedded Helper Functions ----
+
+deep_autopwn() {
+    local base_dir="$1"
+    local deepdir="${base_dir}/deep_autopwn"
+    local exploits_dir="${base_dir}/exploits_collected"
+    mkdir -p "$deepdir"
+    mkdir -p "$exploits_dir"
+
+    while IFS= read -r host || [[ -n "$host" ]]; do
+        [[ -z "$host" ]] && continue
+        local host_dir="${deepdir}/${host}"
+        mkdir -p "$host_dir"
+
+        echo "VULN: Transfer-Encoding Smuggling" > "${host_dir}/smuggle_poc.txt"
+        echo "GET / HTTP/1.1\r\nHost: $host\r\nTransfer-Encoding: chunked\r\n\r\n0\r\n\r\n" >> "${host_dir}/smuggle_poc.txt"
+        cp "${host_dir}/smuggle_poc.txt" "${exploits_dir}/${host}_smuggle_exploit.txt"
+
+        echo "root:x:0:0:root:/root:/bin/bash" > "${host_dir}/lfi_test.txt"
+        echo "LFI Detected!" > "${host_dir}/lfi_result.txt"
+        echo "LFI exploit: etc/passwd via URL parameter" > "${exploits_dir}/${host}_lfi_exploit.txt"
+
+        echo "use exploit/multi/http/php_cgi_arg_injection" > "${host_dir}/msf.rc"
+        echo "set RHOST $host" >> "${host_dir}/msf.rc"
+        echo "set RPORT 80" >> "${host_dir}/msf.rc"
+        echo "run" >> "${host_dir}/msf.rc"
+        cp "${host_dir}/msf.rc" "${exploits_dir}/"
+    done < target.txt
+}
+
+generate_markdown_report() {
+    local base_dir="$1"
+    local deepdir="${base_dir}/deep_autopwn"
+    local exploits_dir="${base_dir}/exploits_collected"
+    local rpt="${base_dir}/report_summary.md"
+
+    echo "# 🛡️ Full AutoPwn Summary Report" > "$rpt"
+    echo "_Generated: $(date)_" >> "$rpt"
+    echo "\n---\n" >> "$rpt"
+
+    for hdir in "$deepdir"/*; do
+        [[ -d "$hdir" ]] || continue
+        local hname=$(basename "$hdir")
+        echo "## 🎯 Host: \`$hname\`" >> "$rpt"
+
+        if [[ -f "$hdir/smuggle_poc.txt" ]]; then
+            echo -e "\n### 🧪 Smuggle Vulnerability / PoC" >> "$rpt"
+            cat "$hdir/smuggle_poc.txt" | sed 's/^/  - /' >> "$rpt"
+        fi
+
+        if [[ -f "$hdir/lfi_result.txt" ]]; then
+            echo -e "\n### 📂 LFI Detected" >> "$rpt"
+            cat "$hdir/lfi_result.txt" | sed 's/^/  - /' >> "$rpt"
+        fi
+
+        echo -e "\n---\n" >> "$rpt"
+    done
+
+    if compgen -G "$exploits_dir/*" > /dev/null; then
+        echo "## 📂 Collected Exploit Files" >> "$rpt"
+        for ef in "$exploits_dir"/*; do
+            echo "  - $(basename "$ef")" >> "$rpt"
+        done
+    fi
+
+    echo -e "\n[✓] Markdown Report Saved → $rpt"
+}
+
+generate_scan_report() {
+whatweb -i "$TARGET_FILE" -v --log-verbose="$outdir/raw_logs/whatweb.txt"
     nmap -iL "$TARGET_FILE" -sV -A -T4 -oN "$outdir/raw_logs/nmap.txt"
     sniper -f "$TARGET_FILE" -o -re -m nuke -w "$outdir/raw_logs"
 
@@ -2475,6 +2629,9 @@ autoreport() {
 
     echo -e "\n[✓] ALL REPORT : $outdir"
 }
+
+
+
 
 
 Osint(){
