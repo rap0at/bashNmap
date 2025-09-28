@@ -2574,10 +2574,6 @@ generate_markdown_report() {
 }
 
 generate_scan_report() {
-whatweb -i "$TARGET_FILE" -v --log-verbose="$outdir/raw_logs/whatweb.txt"
-    nmap -iL "$TARGET_FILE" -sV -A -T4 -oN "$outdir/raw_logs/nmap.txt"
-    sniper -f "$TARGET_FILE" -o -re -m nuke -w "$outdir/raw_logs"
-
     while read -r target; do
         [[ -z "$target" ]] && continue
         nuclei -u http://$target -o "$outdir/raw_logs/nuclei_$target.txt"
