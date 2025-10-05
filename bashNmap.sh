@@ -2476,6 +2476,16 @@ autoreport(){
     printf "  \e[1;93m[▶]\e[0m Sn1per...\n"
     sniper -f "$TARGET_FILE" -o -re -m nuke -w "$outdir"
 
+    # ✅✅✅ 추가된 Python 기반 자동 스캔 분석
+    printf "  \e[1;93m[▶]\e[0m Python-based Recon & Exploit-Map (autopen.py)...\n"
+    if [[ -f "./autopen.py" ]]; then
+        mkdir -p "$outdir/autopen_scan"
+        python3 ./autopen.py --targets "$TARGET_FILE" --outdir "$outdir/autopen_scan"
+        printf "      \e[1;92m[✓]\e[0m autopen.py 분석 완료 → %s\n" "$outdir/autopen_scan"
+    else
+        printf "      \e[1;91m[!]\e[0m autopen.py not found. Skipping.\n"
+    fi
+
     # ---- Auto Exploitation ----
     printf "\n  \e[1;93m[▶]\e[0m Deep AutoPwn Phase...\n"
     deep_autopwn "$outdir"
@@ -2504,6 +2514,7 @@ autoreport(){
         menu
     fi
 }
+
 
 # ---- Embedded Helper Functions ----
 
