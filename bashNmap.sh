@@ -2460,18 +2460,11 @@ autoreport(){
 
     # ---- Pre-Scan Tools Check ----
     require_cmd whatweb || { sleep 1; banner; menu; return; }
-    require_cmd nmap    || { sleep 1; banner; menu; return; }
     require_cmd sniper  || { sleep 1; banner; menu; return; }
 
     # ---- Base Scanning ----
     printf "  \e[1;93m[▶]\e[0m WhatWeb...\n"
     whatweb --log-verbose="${outdir}/whatweb.txt" -i "$TARGET_FILE"
-
-    printf "  \e[1;93m[▶]\e[0m Nmap...\n"
-    nmap -p- -sV -sC -sS -A -v -O -Pn -T4 \
-         --script vuln,http-waf-detect \
-         -iL "$TARGET_FILE" \
-         -oN "${outdir}/nmap.txt"
 
     printf "  \e[1;93m[▶]\e[0m Sn1per...\n"
     sniper -f "$TARGET_FILE" -o -re -m nuke -w "$outdir"
@@ -2715,4 +2708,3 @@ fi
 
 banner
 menu
-
