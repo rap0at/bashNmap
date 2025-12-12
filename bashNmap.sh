@@ -2309,6 +2309,8 @@ elif [[ $option == 9 || $option == 09 ]]; then
 	Nginxpwner
 elif [[ $option == 10 || $option == 010 ]]; then
 	autoreport
+elif [[ $option == 11 || $option == 011 ]]; then
+	autoPEN
 elif [[ $option == 0 || $option == 00 ]]; then
     sleep 1
     printf "\e[0m\n"
@@ -2628,6 +2630,13 @@ generate_scan_report() {
     fi
 
     echo -e "\n[✓] ALL REPORT : $outdir"
+}
+
+autoPEN(){
+	banner
+	python3 AUTO.py;
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 AUTO.py\e[0m\n"
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) AUTO simple web pentest\e[0m\n"
 }
 
 
