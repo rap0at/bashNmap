@@ -2,8 +2,10 @@
 
 
 ## Features
-[![Main Page] 
+```sh
+Main Page
 ![image](https://github.com/user-attachments/assets/629e1dc4-2311-4915-bd76-cf367900c53d)
+```
 [![WEB]
 <img width="676" height="648" alt="2025-12-15 02 29 55" src="https://github.com/user-attachments/assets/a7a9e9d0-ac9b-44b8-b819-ddc084e1de44" />
 [![AUTO web tool] 
