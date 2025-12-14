@@ -24,13 +24,7 @@ pip3 install -r requirements.txt
 ./bashNmap.sh
 ```
 <br>
-# NOTICE
-<br>
->bashNmap is a scripted tool that integrates several security and scanning tools into one.
->Therefore, in order to use bashNmap smoothly, 
->you must install all the necessary requirements and installation related files in advance.
->In particular, there are three key files that must be installed to run bashNmap, 
->so please check them before installing.
+> Note: bashNmap is a scripted tool that integrates several security and scanning tools into one. Therefore, in order to use bashNmap smoothly, you must install all the necessary requirements and installation related files in advance.In particular, there are three key files that must be installed to run bashNmap, so please check them before installing.
 <br>
 ```sh
 requirements.txt
