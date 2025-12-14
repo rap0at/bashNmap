@@ -2286,6 +2286,10 @@ Web(){
 	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m08\e[0m\e[1;31m]\e[0m\e[1;33m CVE-2021-41773\e[0m\n"
 	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m09\e[0m\e[1;31m]\e[0m\e[1;33m Nginxpwner\e[0m\n"
 	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m10\e[0m\e[1;31m]\e[0m\e[1;33m autoreport\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m11\e[0m\e[1;31m]\e[0m\e[1;33m autoPEN\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m12\e[0m\e[1;31m]\e[0m\e[1;33m raptor\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m13\e[0m\e[1;31m]\e[0m\e[1;33m rap0at\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m14\e[0m\e[1;31m]\e[0m\e[1;33m RCE\e[0m\n"
 	printf "\e[0m\n"
 	read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Select An Option \e[0m\e[1;96m: \e[0m\e[1;93m' option
 
