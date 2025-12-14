@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R.A.P.T.O.R. Console</title>
+    <link rel="stylesheet" href="/static/RCE.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>R.A.P.T.O.R.</h1>
+            <p class="subtitle">Rapid Automated Penetration Testing and Offensive Reconnaissance</p>
+        </header>
+        
+        <main>
+            <div class="input-group">
+                <label for="target">Target URL:</label>
+                <input type="text" id="target" placeholder="e.g., http://192.168.1.100">
+            </div>
+
+            <div class="scan-options">
+                <label>Scan Options:</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="nmap" name="scans" value="nmap" checked>
+                    <label for="nmap">Nmap</label>
+                    <input type="checkbox" id="dirb" name="scans" value="dirb" checked>
+                    <label for="dirb">Dirb</label>
+                    <input type="checkbox" id="nikto" name="scans" value="nikto" checked>
+                    <label for="nikto">Nikto</label>
+                    <input type="checkbox" id="sqlmap" name="scans" value="sqlmap">
+                    <label for="sqlmap">SQLMap</label>
+                </div>
+                <button id="attack-btn">Launch Attack</button>
+            </div>
+            
+            <div class="output-box">
+                <pre id="output"></pre>
+            </div>
+
+            <div class="controls">
+                <button id="report-btn" class="hidden">Download Report</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
+    
+    <!-- Client-side Logic -->
+    <script src="/static/RCE.js"></script>
+</body>
+</html>

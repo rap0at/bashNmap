@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+
+:root {
+    --primary-color: #00aaff;
+    --secondary-color: #ff00ff;
+    --background-color: #0a0a0a;
+    --dark-surface-color: #1a1a1a;
+    --text-color: #e0e0e0;
+    --success-color: #00ff00;
+    --fail-color: #ff4444;
+    --font-family: 'Roboto Mono', monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: var(--font-family);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 900px;
+    background-color: var(--dark-surface-color);
+    border: 1px solid var(--primary-color);
+    box-shadow: 0 0 20px rgba(0, 170, 255, 0.5);
+    padding: 25px;
+    border-radius: 8px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--primary-color);
+    padding-bottom: 15px;
+}
+
+header h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    text-shadow: 0 0 10px var(--primary-color);
+}
+
+header .subtitle {
+    color: var(--secondary-color);
+    font-size: 1.1rem;
+    margin-top: 5px;
+}
+
+.input-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    align-items: center;
+}
+
+.input-group label {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.input-group input {
+    flex-grow: 1;
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    color: var(--text-color);
+    padding: 12px;
+    font-family: var(--font-family);
+    font-size: 1rem;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 8px rgba(0, 170, 255, 0.5);
+}
+
+.scan-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    gap: 15px;
+}
+
+.checkbox-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.checkbox-group input {
+    margin-right: 5px;
+}
+
+.checkbox-group label {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: var(--background-color);
+    border: none;
+    padding: 12px 20px;
+    font-family: var(--font-family);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    outline: none;
+}
+
+button:hover {
+    background-color: #33bbff;
+    box-shadow: 0 0 15px rgba(0, 170, 255, 0.7);
+}
+
+button:disabled {
+    background-color: #555;
+    color: #888;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.output-box {
+    background-color: #000;
+    border: 1px solid #333;
+    height: 400px;
+    overflow-y: scroll;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.output-box pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 0.9rem;
+    color: var(--success-color);
+}
+
+.controls {
+    margin-top: 20px;
+    text-align: right;
+}
+
+#report-btn {
+    background-color: var(--secondary-color);
+}
+
+#report-btn:hover {
+    background-color: #ff33ff;
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.7);
+}
+
+.hidden {
+    display: none;
+}

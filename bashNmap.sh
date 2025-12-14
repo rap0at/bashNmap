@@ -2311,6 +2311,12 @@ elif [[ $option == 10 || $option == 010 ]]; then
 	autoreport
 elif [[ $option == 11 || $option == 011 ]]; then
 	autoPEN
+elif [[ $option == 12 || $option == 012 ]]; then
+	raptor
+elif [[ $option == 13 || $option == 013 ]]; then
+	rap0at
+elif [[ $option == 14 || $option == 014 ]]; then
+	RCE
 elif [[ $option == 0 || $option == 00 ]]; then
     sleep 1
     printf "\e[0m\n"
@@ -2637,6 +2643,27 @@ autoPEN(){
 	python3 AUTO.py;
 	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 AUTO.py\e[0m\n"
 	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) AUTO simple web pentest\e[0m\n"
+}
+
+raptor(){
+	banner
+	python3 raptor.py;
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 raptor.py\e[0m\n"
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) AUTO simple web pentest\e[0m\n"
+}
+
+rap0at(){
+	banner
+	python3 rap0at.py;
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 rap0at.py\e[0m\n"
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) AUTO simple web pentest\e[0m\n"
+}
+
+RCE(){
+	banner
+	python3 RCE.py;
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 RCE.py\e[0m\n"
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) AUTO simple apache RCE TEST\e[0m\n"
 }
 
 
