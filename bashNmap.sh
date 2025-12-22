@@ -2290,6 +2290,7 @@ Web(){
 	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m12\e[0m\e[1;31m]\e[0m\e[1;33m raptor\e[0m\n"
 	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m13\e[0m\e[1;31m]\e[0m\e[1;33m rap0at\e[0m\n"
 	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m14\e[0m\e[1;31m]\e[0m\e[1;33m RCE\e[0m\n"
+	printf "\e[0m\e[1;31m  [\e[0m\e[1;37m15\e[0m\e[1;31m]\e[0m\e[1;33m CamXploit\e[0m\n"
 	printf "\e[0m\n"
 	read -p $'  \e[1;31m[\e[0m\e[1;37m~\e[0m\e[1;31m]\e[0m\e[1;92m Select An Option \e[0m\e[1;96m: \e[0m\e[1;93m' option
 
@@ -2321,6 +2322,8 @@ elif [[ $option == 13 || $option == 013 ]]; then
 	rap0at
 elif [[ $option == 14 || $option == 014 ]]; then
 	RCE
+elif [[ $option == 15 || $option == 015 ]]; then
+	CamXploit
 elif [[ $option == 0 || $option == 00 ]]; then
     sleep 1
     printf "\e[0m\n"
@@ -2670,6 +2673,11 @@ RCE(){
 	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) AUTO simple apache RCE TEST\e[0m\n"
 }
 
+CamXploit(){
+	banner
+	python3 CamXploit.py -h;
+	printf "  \e[0m\e[1;91m[\e[0m\e[1;97m!\e[0m\e[1;91m]\e[0m\e[1;93m ex) python3 CamXploit.py\e[0m\n"
+}
 
 
 

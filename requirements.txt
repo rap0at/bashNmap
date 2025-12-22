@@ -1,5 +1,11 @@
 pandas
 argparse
+ipaddress
+dnspython
+requests
+scapy
+python-whois
+pyshorteners
 pyminizip
 tabulate
 termcolor
